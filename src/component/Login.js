@@ -1,6 +1,7 @@
 import {Link} from "react-router-dom"
 import 'antd/dist/antd.min.css';
 import {  Button, Checkbox, Form, Input  } from 'antd';
+import Nav from "./Nav"
 
 function Login() {
     const onFinish = (values) => {
@@ -12,9 +13,10 @@ function Login() {
     };
 
     return (
-        <div className="Login" style={{marginTop:'100px'}}>
-            <div className="Wrap" style={{float:'left'}}><div style={{textAlign:'center'}}>Home</div><div className="Title" style={{textAlign:'center'}}><h1>Login</h1></div></div>
-            <br></br>
+        <div className="Login">
+            <div className="NavDiv"><Nav/></div>
+            <div className="Margin" style={{marginTop:'100px'}}></div>
+            <div className="Title" style={{textAlign:'center'}}><h1>Login</h1></div>
             <div className="Form">
                 <Form style={{width:'500px', margin:'auto'}}
                     name="basic"
