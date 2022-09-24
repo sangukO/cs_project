@@ -1,4 +1,3 @@
-import {Link} from "react-router-dom"
 import 'antd/dist/antd.min.css';
 import {  Button, Form, Input, InputNumber  } from 'antd';
 import Nav from "./Nav"
