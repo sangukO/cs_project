@@ -23,7 +23,7 @@ function Login() {
                         span: 8,
                     }}
                     wrapperCol={{
-                        span: 16,
+                        span: 12,
                     }}
                     initialValues={{
                         remember: true,
@@ -33,7 +33,7 @@ function Login() {
                 autoComplete="off"
                 >
                     <Form.Item
-                        label="Username"
+                        label="아이디"
                         name="username"
                         rules={[
                         {
@@ -46,7 +46,7 @@ function Login() {
                     </Form.Item>
 
                     <Form.Item
-                        label="Password"
+                        label="비밀번호"
                         name="password"
                         rules={[
                         {
@@ -66,17 +66,17 @@ function Login() {
                         span: 16,
                         }}
                     >
-                        <Checkbox>Remember me</Checkbox>
+                        <Checkbox>아이디 기억하기</Checkbox>
                     </Form.Item>
 
                     <Form.Item
                         wrapperCol={{
-                        offset: 8,
+                        offset: 10,
                         span: 16,
                         }}
                     >
                         <Button type="primary" htmlType="submit">
-                        Submit
+                        로그인
                         </Button>
                     </Form.Item>
                 </Form>

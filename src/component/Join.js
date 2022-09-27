@@ -1,5 +1,5 @@
 import 'antd/dist/antd.min.css';
-import {  Button, Form, Input, InputNumber  } from 'antd';
+import {  Button, Form, Input, InputNumber, Radio } from 'antd';
 import Nav from "./Nav"
 
 function Join() {
@@ -9,7 +9,7 @@ function Join() {
             span: 8,
         },
         wrapperCol: {
-            span: 16,
+            span: 12,
         },
         };
     
@@ -36,8 +36,8 @@ function Join() {
             <div className="Form">
                 <Form style={{width:'500px', margin:'auto'}} {...layout} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages}>
                     <Form.Item
-                        name={['user', 'name']}
-                        label="Name"
+                        name={['user', 'username']}
+                        label="아이디"
                         rules={[
                         {
                             required: true,
@@ -47,11 +47,35 @@ function Join() {
                         <Input />
                     </Form.Item>
                     <Form.Item
-                        name={['user', 'email']}
-                        label="Email"
+                        name={['user', 'password']}
+                        label="비밀번호"
                         rules={[
                         {
-                            type: 'email',
+                            type: 'password',
+                            required: true,
+                        },
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        name={['user', 'passwordCk']}
+                        label="비밀번호 확인"
+                        rules={[
+                        {
+                            type: 'password',
+                            required: true,
+                        },
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item
+                        name={['user', 'name']}
+                        label="이름"
+                        rules={[
+                        {
+                            required: true,
                         },
                         ]}
                     >
@@ -59,7 +83,7 @@ function Join() {
                     </Form.Item>
                     <Form.Item
                         name={['user', 'age']}
-                        label="Age"
+                        label="나이"
                         rules={[
                         {
                             type: 'number',
@@ -70,15 +94,32 @@ function Join() {
                     >
                         <InputNumber />
                     </Form.Item>
-                    <Form.Item name={['user', 'website']} label="Phone">
+                    <Form.Item
+                        name={['user', 'gender']}
+                        label="성별"
+                    >
+                        <Radio.Group>
+                            <Radio value="M"> 남 </Radio>
+                            <Radio value="F"> 여 </Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item
+                        name={['user', 'email']}
+                        label="이메일"
+                        rules={[
+                        {
+                            type: 'email',
+                        },
+                        ]}
+                    >
                         <Input />
                     </Form.Item>
-                    <Form.Item name={['user', 'introduction']} label="">
-                        <Input.TextArea />
+                    <Form.Item name={['user', 'phone']} label="전화번호">
+                        <Input />
                     </Form.Item>
-                    <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                    <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 10 }}>
                         <Button type="primary" htmlType="submit">
-                        Submit
+                        회원가입
                         </Button>
                     </Form.Item>
                 </Form>
