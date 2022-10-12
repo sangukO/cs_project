@@ -1,7 +1,7 @@
-import {Link} from "react-router-dom"
-import Header from "./Header"
+import {Link} from "react-router-dom";
+import Header from "./Header";
 import { Breadcrumb } from 'antd';
-import Nav from "./Nav"
+import Nav from "./Nav";
 
 function Home() {
     return (
