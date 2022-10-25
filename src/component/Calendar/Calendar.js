@@ -1,17 +1,13 @@
 import Header from "../Header";
-import { Alert, Badge, Breadcrumb, Calendar as Calendar2 } from 'antd';
+import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio } from 'antd';
 import Nav from "../Nav";
-import locale from "antd/es/calendar/locale/ko_KR";
 import moment from "moment";
+import locale from "antd/es/calendar/locale/ko_KR";
 import { useState } from "react";
 
 function Calendar() {
 
-    const [selectedValue, setSelectedValue] = useState(moment(moment()));
-
-    const onSelectDateCell = (newValue) => {
-        setSelectedValue(newValue);
-    }
+    const [writeForm] = Form.useForm();
 
     const data = [
         {
@@ -51,10 +47,73 @@ function Calendar() {
             "id":6,
             "type":"warning",
             "date":"2022/10/08",
-            "name":"김은하",
-            "content":"	오전 물건 진열하기",
+            "name":"김인하",
+            "content":"오전 물건 진열하기",
         },
     ]
+
+    const [selectedValue, setSelectedValue] = useState(moment(moment()));
+    const [isListModalOpen, setisListModalOpen] = useState(false);
+    const [todoList, setTodoList] = useState([]);
+    const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
+    const [writeValue, setWriteValue] = useState("진행중");
+
+    const onSelectDateCell = (newValue) => {
+        const dateData = moment(newValue._d);
+        setSelectedValue(dateData.format('YYYY/MM/DD'));
+        getTodoList(data, selectedValue);
+        if(todoList[0]==undefined) {
+            showWriteModal();
+        }
+        else {
+            showListModal();
+        }
+    };
+
+    const getTodoList = (data, selectedValue) => {
+        const TodoList = data.filter(data=>data.date == selectedValue)
+            .map(data => data.content
+        );
+        const TodoArr = Object.entries(TodoList);
+        const Arr = [];
+        TodoArr.map((todo) => 
+            Arr.push(todo[1])
+        )
+        setTodoList(Arr);
+    } 
+
+    const showListModal = () => {
+        setisListModalOpen(true);
+    };
+
+    const onListOk = () => {
+        setisListModalOpen(false);
+    };
+
+    const onListCancel = () => {
+        setisListModalOpen(false);
+    };
+
+
+    const showWriteModal = () => {
+        writeForm.setFieldsValue({
+        tag: "진행중",
+        });
+        setisWriteModalOpen(true);
+    };
+
+    const onWriteStateChange = (e) => {
+        setWriteValue(e.target.value);
+    };
+
+    const onWriteOk = () => {
+        setisWriteModalOpen(false);
+    };
+
+    const onWriteCancel = () => {
+        setisWriteModalOpen(false);
+    };
+
 
     const dateCellRender = (value) => {
         const stringValue = value.format("yyyy/MM/DD");
@@ -88,7 +147,6 @@ function Calendar() {
                 <div className="Margin" style={{height:"50px"}}></div>
                 <div className="Title" style={{textAlign:"center"}}><h1>일정 관리</h1></div>
                 <div className="Calendar">
-                    <Alert message={`${selectedValue?.format('YYYY-MM-DD')}`} />
                     <Calendar2
                         locale={locale}
                         onSelect={onSelectDateCell}
@@ -96,6 +154,80 @@ function Calendar() {
                     />
                 </div>
             </div>
+            <Modal title={selectedValue} open={isListModalOpen} onOk={onListOk} onCancel={onListCancel}>
+                <div className="TodoList">
+                <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
+                    {todoList.map((t) => (
+                            <li>{t}</li>
+                        ))}
+                    </ul>
+                </div>
+            </Modal>
+            <Modal title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
+            <div className="Form">
+                    <Form form={writeForm} style={{width:'80%', margin:'auto'}}
+                        name="basic"
+                        labelCol={{
+                            span: 5,
+                        }}
+                        wrapperCol={{
+                            span: 20,
+                        }}
+                        initialValues={{
+                            remember: true,
+                            tag : writeValue,
+                        }}
+                    autoComplete="off"
+                    >
+                        <Form.Item
+                            label="이름"
+                            name="name"
+                            rules={[
+                            {
+                                message: 'Please input your username!',
+                            },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="시간"
+                            name="time"
+                            rules={[
+                            {
+                                message: 'Please input your password!',
+                            },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="할 일"
+                            name="todo"
+                            rules={[
+                            {
+                                message: 'Please input your password!',
+                            },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="상태"
+                            name="tag"
+                        >
+                            <Radio.Group value={writeValue} onChange={onWriteStateChange}>
+                                <Radio value="진행중">진행중</Radio>
+                                <Radio value="완료">완료</Radio>
+                                <Radio value="미완료">미완료</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                    </Form>
+                </div>
+            </Modal>
         </div>
     )
 }

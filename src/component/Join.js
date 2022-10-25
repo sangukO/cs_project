@@ -47,7 +47,11 @@ function Join() {
                 <div className="Margin" style={{marginTop:'100px'}}></div>
                 <div className="Title" style={{textAlign:'center'}}><h1>Join</h1></div>
                 <div className="Form">
-                    <Form style={{width:'50%', margin:'auto'}} {...layout} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages}>
+                    <Form style={{width:'50%', margin:'auto'}} {...layout}
+                        name="nest-messages"
+                        onFinish={onFinish}
+                        validateMessages={validateMessages}
+                    >
                         <Form.Item
                             name={['user', 'username']}
                             label="아이디"

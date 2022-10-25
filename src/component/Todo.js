@@ -25,7 +25,6 @@ function Todo() {
 
   const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
 
-  /** 작성 창 띄우는 함수 */
   const showWriteModal = () => {
     writeForm.setFieldsValue({
       tag: "진행중",
@@ -50,7 +49,7 @@ function Todo() {
       name : record.name,
       time : record.time,
       todo : record.todo,
-      tag: record.tags[0],
+      tag: record.tag[0],
     })
     setisEditModalOpen(true);
   };
@@ -97,11 +96,11 @@ function Todo() {
     },
     {
       title: '상태',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (_, { tags }) => (
+      key: 'tag',
+      dataIndex: 'tag',
+      render: (_, { tag }) => (
         <>
-          {tags.map((tag) => {
+          {tag.map((tag) => {
             let color = tag === '완료' ? 'success' : 'error';
             let icon = tag === '완료' ? <CheckCircleOutlined /> : <CloseCircleOutlined />;
   
@@ -144,21 +143,21 @@ function Todo() {
       name: '오상욱',
       time: '평일 오후',
       todo: '발주된 물건 검수',
-      tags: ['완료'],
+      tag: ['완료'],
     },
     {
       key: '2',
       name: '김현호',
       time: '평일 야간',
       todo: '새벽에 쓰레기통 비우기',
-      tags: ['미완료'],
+      tag: ['미완료'],
     },
     {
       key: '3',
-      name: '김은하',
+      name: '김인하',
       time: '주말 오전',
       todo: '오전 물건 진열하기',
-      tags: ['진행중'],
+      tag: ['진행중'],
     },
   ];
   
