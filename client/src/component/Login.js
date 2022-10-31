@@ -17,7 +17,6 @@ function Login() {
         }
         axios.post('http://localhost:3001/login', body)
         .then((response) => {
-            console.log("로그인 클라이언트에서 받음", response.data);
             if (response.data.loginSuccess) {
                 dispatch({type:'getId', _id: response.data.userId});
                 navigate('/');
