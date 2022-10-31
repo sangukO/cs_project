@@ -1,11 +1,24 @@
+import { useDispatch } from 'react-redux';
 import 'antd/dist/antd.min.css';
 import {  Breadcrumb, Button, Checkbox, Form, Input  } from 'antd';
+import  { useNavigate } from 'react-router-dom'; 
 import Header from "./Header";
 import Nav from "./Nav";
+import axios from 'axios';
+import {loginUser} from '../_actions/user_action';
 
 function Login() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const onFinish = (values) => {
-        console.log('Success:', values);
+        let body = {
+            userId : values.userId,
+            password : values.password
+        }
+        //dispatch({type:'getId', val: res.data.userId});
+        dispatch(loginUser(body));
+        // navigate('/');
     };
     
     const onFinishFailed = (errorInfo) => {
@@ -13,6 +26,7 @@ function Login() {
     };
 
     return (
+        
         <div className="Login">
             <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
@@ -47,11 +61,11 @@ function Login() {
                     >
                         <Form.Item
                             label="아이디"
-                            name="username"
+                            name="userId"
                             rules={[
                             {
                                 required: true,
-                                message: 'Please input your username!',
+                                message: 'Please input your userId!',
                             },
                             ]}
                         >

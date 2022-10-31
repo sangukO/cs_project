@@ -77,12 +77,70 @@ function Todo() {
   const onDeleteCancel = () => {
     setisDeleteModalOpen(false);
   };
-
+  
+  const data = [
+    {
+        "id":"1",
+        "name":"점주",
+        "date":"2022/10/03",
+        "time": "점주",
+        "todo":"물건 발주",
+        "tag":["success"],
+    },
+    {
+        "id":"2",
+        "name":"오상욱",
+        "date":"2022/10/04",
+        "time": "평일 오후",
+        "todo":"발주된 물건 검수",
+        "tag":["success"],
+    },
+    {
+        "id":"3",
+        "name":"점주",
+        "date":"2022/10/05",
+        "time": "점주",
+        "todo":"물건 발주",
+        "tag":["success"],
+    },
+    {
+        "id":"4",
+        "name":"오상욱",
+        "date":"2022/10/06",
+        "time": "평일 오후",
+        "todo":"발주된 물건 검수",
+        "tag":["warning"],
+    },
+    {
+        "id":"5",
+        "name":"김현호",
+        "date":"2022/10/04",
+        "time": "평일 야간",
+        "todo":"새벽에 쓰레기통 비우기",
+        "tag":["error"],
+    },
+    {
+        "id":"6",
+        "name":"김인하",
+        "date":"2022/10/08",
+        "time": "주말 오전",
+        "todo":"오전 물건 진열하기",
+        "tag":["warning"],
+    },
+  ]
+  
   const columns = [
     {
       title: '이름',
       dataIndex: 'name',
       key: 'name',
+    },
+    {
+      title: '날짜',
+      dataIndex: 'date',
+      key: 'date',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: '시간',
@@ -96,22 +154,26 @@ function Todo() {
     },
     {
       title: '상태',
-      key: 'tag',
       dataIndex: 'tag',
+      key: 'tag',
       render: (_, { tag }) => (
         <>
+          
           {tag.map((tag) => {
-            let color = tag === '완료' ? 'success' : 'error';
-            let icon = tag === '완료' ? <CheckCircleOutlined /> : <CloseCircleOutlined />;
-  
-            if (tag === '진행중') {
+            let color = tag === 'success' ? 'success' : 'error';
+            let icon = tag === 'success' ? <CheckCircleOutlined /> : <CloseCircleOutlined />;
+            let tagName = tag === 'success' ? '완료' :  '미완료';
+
+
+            if (tag === 'warning') {
               color = 'warning';
+              tagName = '진행중';
               icon = <SyncOutlined spin />;
             }
   
             return (
-              <Tag color={color} key={tag} icon={icon}>
-                {tag.toUpperCase()}
+              <Tag key={tag.id} color={color} icon={icon}>
+                {tagName}
               </Tag>
             );
           })}
@@ -121,8 +183,8 @@ function Todo() {
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
-        <div style={{display:"flex", justifyContent: "center"}}> 
+      render: (_, record, i) => (
+        <div key={i} style={{display:"flex", justifyContent: "center"}}> 
         <EditOutlined 
         style={{ color: "black" }} 
         onClick={()=>{showEditModal(record)}} 
@@ -136,31 +198,7 @@ function Todo() {
     ),
     },
   ];
-  
-  const data = [
-    {
-      key: '1',
-      name: '오상욱',
-      time: '평일 오후',
-      todo: '발주된 물건 검수',
-      tag: ['완료'],
-    },
-    {
-      key: '2',
-      name: '김현호',
-      time: '평일 야간',
-      todo: '새벽에 쓰레기통 비우기',
-      tag: ['미완료'],
-    },
-    {
-      key: '3',
-      name: '김인하',
-      time: '주말 오전',
-      todo: '오전 물건 진열하기',
-      tag: ['진행중'],
-    },
-  ];
-  
+
   return (
         <div>
           <div className="Header"><Header/></div>

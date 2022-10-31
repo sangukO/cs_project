@@ -11,44 +11,52 @@ function Calendar() {
 
     const data = [
         {
-            "id":1,
-            "type":"success",
+            "id":"1",
+            "name":"점주",
             "date":"2022/10/03",
-            "content":"물건 발주",
+            "time": "점주",
+            "todo":"물건 발주",
+            "tag":["success"],
         },
         {
-            "id":2,
-            "type":"success",
-            "date":"2022/10/04",
+            "id":"2",
             "name":"오상욱",
-            "content":"발주된 물건 검수",
+            "date":"2022/10/04",
+            "time": "평일 오후",
+            "todo":"발주된 물건 검수",
+            "tag":["success"],
         },
         {
-            "id":3,
-            "type":"success",
+            "id":"3",
+            "name":"점주",
             "date":"2022/10/05",
-            "content":"물건 발주",
+            "time": "점주",
+            "todo":"물건 발주",
+            "tag":["success"],
         },
         {
-            "id":4,
-            "type":"warning",
-            "date":"2022/10/06",
+            "id":"4",
             "name":"오상욱",
-            "content":"발주된 물건 검수",
+            "date":"2022/10/06",
+            "time": "평일 오후",
+            "todo":"발주된 물건 검수",
+            "tag":["warning"],
         },
         {
-            "id":5,
-            "type":"error",
-            "date":"2022/10/04",
+            "id":"5",
             "name":"김현호",
-            "content":"새벽에 쓰레기통 비우기",
+            "date":"2022/10/04",
+            "time": "평일 야간",
+            "todo":"새벽에 쓰레기통 비우기",
+            "tag":["error"],
         },
         {
-            "id":6,
-            "type":"warning",
-            "date":"2022/10/08",
+            "id":"6",
             "name":"김인하",
-            "content":"오전 물건 진열하기",
+            "date":"2022/10/08",
+            "time": "주말 오전",
+            "todo":"오전 물건 진열하기",
+            "tag":["warning"],
         },
     ]
 
@@ -62,7 +70,7 @@ function Calendar() {
         const dateData = moment(newValue._d);
         setSelectedValue(dateData.format('YYYY/MM/DD'));
         getTodoList(data, selectedValue);
-        if(todoList[0]==undefined) {
+        if(todoList[0]===undefined) {
             showWriteModal();
         }
         else {
@@ -71,8 +79,8 @@ function Calendar() {
     };
 
     const getTodoList = (data, selectedValue) => {
-        const TodoList = data.filter(data=>data.date == selectedValue)
-            .map(data => data.content
+        const TodoList = data.filter(data=>data.date === selectedValue)
+            .map(data => data.todo
         );
         const TodoArr = Object.entries(TodoList);
         const Arr = [];
@@ -121,8 +129,8 @@ function Calendar() {
         return (
             <ul className="events">
                 {listData.map((item) => (
-                    <li key={item.content}>
-                        <Badge status={item.type} text={item.content} />
+                    <li key={item.todo}>
+                        <Badge status={item.tag} text={item.todo} />
                     </li>
                 ))}
             </ul>
@@ -133,7 +141,7 @@ function Calendar() {
         <div>
             <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="Content" style={{float:"left", width:"80%"}}>
+            <div className="todo" style={{float:"left", width:"80%"}}>
                 <div className="Breadcrumb">
                     <Breadcrumb
                     style={{

@@ -1,10 +1,12 @@
 import 'antd/dist/antd.min.css';
 import {  Breadcrumb, Button, Form, Input, InputNumber, Radio } from 'antd';
+import  { useNavigate } from 'react-router-dom'; 
 import Header from "./Header";
 import Nav from "./Nav";
+import axios from 'axios';
 
 function Join() {
-
+    const navigate = useNavigate();
     const layout = {
         labelCol: {
             span: 8,
@@ -26,7 +28,30 @@ function Join() {
     };
 
     const onFinish = (values) => {
-        console.log(values);
+
+        let body = {
+            userId : values.user.userId,
+            password : values.user.password,
+            username : values.user.name,
+            age : values.user.age,
+            gender : values.user.gender,
+            email : values.user.email,
+            phone : values.user.phone
+        }
+
+        axios.post('http://localhost:3001/register', body).then((res) => {
+                if(!res.data.sucess) {
+                    /** res 보고 예외처리 꼼꼼하게 */
+                    if(res.data.err.message) {
+                        console.log(res.data.err.message);
+                    } else {
+                        alert("예외처리");
+                    }
+                } else {
+                    alert("회원가입이 완료되었습니다.");
+                    navigate('/Login');
+                }
+            })
       };
 
     return (
@@ -53,7 +78,7 @@ function Join() {
                         validateMessages={validateMessages}
                     >
                         <Form.Item
-                            name={['user', 'username']}
+                            name={['user', 'userId']}
                             label="아이디"
                             rules={[
                             {
@@ -116,8 +141,8 @@ function Join() {
                             label="성별"
                         >
                             <Radio.Group>
-                                <Radio value="M"> 남 </Radio>
-                                <Radio value="F"> 여 </Radio>
+                                <Radio value="0"> 남 </Radio>
+                                <Radio value="1"> 여 </Radio>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item
