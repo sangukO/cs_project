@@ -1,23 +1,13 @@
 import axios from "axios";
-import {
-    LOGIN_USER
-} from './types';
+import { LOGIN_USER } from './types';
 
 export function loginUser(dataToSubmit) {
     const request = axios.post('http://localhost:3001/login', dataToSubmit)
-        .then((response) => {
-            if(!response.data.loginSuccess) {
-                if(response.data.message == "userId none") {
-                    alert("없는 아이디입니다.");
-                } else {
-                    alert("잘못된 비밀번호입니다.");
-                }
-            }
-        })
+        .then((response) => console.log("로그인 클라이언트에서 받음", response.data))
 
-        return {
-            type: LOGIN_USER,
-            payload: request
-        }
-
+    return {
+        type: LOGIN_USER,
+        payload: request,
+    }
+            
 }

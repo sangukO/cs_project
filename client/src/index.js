@@ -6,13 +6,26 @@ import { applyMiddleware, createStore } from 'redux';
 import promiseMiddleware from 'redux-promise';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import ReduxThunk from 'redux-thunk';
-import Reducer from './_reducers';
 
-const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)(createStore)
+const userId = undefined;
+
+function reducer(state = userId, action) {
+  if (action.type === 'getId') {
+    state = action._id;
+    return state;
+  } else if (action.type === 'deleteId') {
+    state = undefined;
+    return state;
+  }
+}
+
+let store = createStore(reducer)
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
-  <Provider store={createStoreWithMiddleware(Reducer)}>
-    <App />
-  </Provider>
+  <Provider store={store}>
+  <App />
+</Provider>
 );

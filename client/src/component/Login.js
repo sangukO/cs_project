@@ -5,7 +5,6 @@ import  { useNavigate } from 'react-router-dom';
 import Header from "./Header";
 import Nav from "./Nav";
 import axios from 'axios';
-import {loginUser} from '../_actions/user_action';
 
 function Login() {
     const dispatch = useDispatch();
@@ -16,10 +15,18 @@ function Login() {
             userId : values.userId,
             password : values.password
         }
-        //dispatch({type:'getId', val: res.data.userId});
-        dispatch(loginUser(body));
-        // navigate('/');
-    };
+        axios.post('http://localhost:3001/login', body)
+        .then((response) => {
+            console.log("로그인 클라이언트에서 받음", response.data);
+            if (response.data.loginSuccess) {
+                dispatch({type:'getId', _id: response.data.userId});
+                navigate('/');
+            }
+            else {
+                alert('Error');
+            }
+        });
+    }
     
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
