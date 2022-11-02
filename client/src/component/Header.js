@@ -11,15 +11,16 @@ const { Header} = Layout;
 function Nav() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const _id = useSelector( (state) => state );
+  const userId = useSelector( (state) => state );
 
   const logout = () => {
 
     let body = {
-      _id : _id,
+      userId : userId,
     }
 
-    axios.get('http://localhost:3001/logout', body).then(() => {
+    axios.post('http://localhost:3001/logout', body).then((req) => {
+      console.log(req);
       dispatch({type:'deleteId'});
       alert('로그아웃되었습니다.');
       navigate('/');
@@ -33,13 +34,13 @@ function Nav() {
             <div>
               <div className='Member' style={{float:'right'}}>
                 {
-                  _id === undefined
+                  userId === undefined
                   ?
                   <div><Link to={"/Login"}>LOGIN</Link>
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   <Link to={"/Join"}>JOIN</Link></div>
                   :
-                  <div><span>{_id}님 환영합니다.</span> <Button type="link" onClick={() => logout()}>LOGOUT</Button></div>
+                  <div><span>{userId}님 환영합니다.</span> <Button type="link" onClick={() => logout()}>LOGOUT</Button></div>
                 }
 
               </div>

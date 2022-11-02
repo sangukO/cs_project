@@ -18,7 +18,7 @@ function Login() {
         axios.post('http://localhost:3001/login', body)
         .then((response) => {
             if (response.data.loginSuccess) {
-                dispatch({type:'getId', _id: response.data.userId});
+                dispatch({type:'getId', userId: response.data.userId});
                 navigate('/');
             }
             else {

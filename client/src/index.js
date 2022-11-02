@@ -8,10 +8,11 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import ReduxThunk from 'redux-thunk';
 
 const userId = undefined;
+const _id = undefined;
 
 function reducer(state = userId, action) {
   if (action.type === 'getId') {
-    state = action._id;
+    state = action.userId;
     return state;
   } else if (action.type === 'deleteId') {
     state = undefined;
