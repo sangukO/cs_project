@@ -1,5 +1,5 @@
 import Header from "../Header";
-import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio } from 'antd';
+import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
 import Nav from "../Nav";
 import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
@@ -80,14 +80,14 @@ function Calendar() {
 
     const getTodoList = (data, selectedValue) => {
         const TodoList = data.filter(data=>data.date === selectedValue)
-            .map(data => data.todo
-        );
+            .map(data => data);
         const TodoArr = Object.entries(TodoList);
-        const Arr = [];
-        TodoArr.map((todo) => 
-            Arr.push(todo[1])
-        )
-        setTodoList(Arr);
+        console.log(TodoArr);
+        // const Arr = [];
+        // TodoArr.map((todo) => 
+        //     Arr.push(todo[1])
+        // )
+        // setTodoList(Arr);
     } 
 
     const showListModal = () => {
@@ -137,6 +137,10 @@ function Calendar() {
         )
     }
 
+    const enterList = (todo) => {
+        console.log(todo);
+    }
+
     return (
         <div>
             <div className="Header"><Header/></div>
@@ -166,7 +170,7 @@ function Calendar() {
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
                     {todoList.map((t) => (
-                            <li>{t}</li>
+                            <li><Button type="link" onClick={() => enterList({t})} style={{color:'black'}}>{t}</Button></li>
                         ))}
                     </ul>
                 </div>
