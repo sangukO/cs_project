@@ -20,7 +20,6 @@ function Nav() {
     }
 
     axios.post('http://localhost:3001/logout', body).then((req) => {
-      console.log(req);
       dispatch({type:'deleteId'});
       alert('로그아웃되었습니다.');
       navigate('/');
