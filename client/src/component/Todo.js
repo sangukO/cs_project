@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from "./Header";
 import Nav from "./Nav";
 import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
@@ -11,11 +11,14 @@ import {
   DeleteOutlined
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
+import axios from 'axios';
 
 function Todo() {
 
   const [writeForm] = Form.useForm();
   const [editForm] = Form.useForm();
+  const [todoData, setTodoData] = useState([]);
+  let dataArry = [];
 
   const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
   const [writeValue, setWriteValue] = useState("진행중");
@@ -37,7 +40,30 @@ function Todo() {
   };
 
   const onWriteOk = () => {
-    setisWriteModalOpen(false);
+
+    let body = {
+      name : writeForm.getFieldValue(('name')),
+      date : writeForm.getFieldValue(('date')),
+      time : writeForm.getFieldValue(('time')),
+      todo : writeForm.getFieldValue(('todo')),
+      tag : writeForm.getFieldValue(('tag'))
+  }
+  
+    axios.post('http://localhost:3001/board', body).then((res) => {
+      console.log(res.data.success);
+      if(!res.data.success) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              console.log(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+          alert("작성이 완료되었습니다.");
+          // navigate('/Todo');
+      }
+    })
+  //  setisWriteModalOpen(false);
   };
 
   const onWriteCancel = () => {
@@ -78,57 +104,29 @@ function Todo() {
     setisDeleteModalOpen(false);
   };
   
-  const data = [
-    {
-        "id":"1",
-        "name":"점주",
-        "date":"2022/10/03",
-        "time": "점주",
-        "todo":"물건 발주",
-        "tag":["success"],
-    },
-    {
-        "id":"2",
-        "name":"오상욱",
-        "date":"2022/10/04",
-        "time": "평일 오후",
-        "todo":"발주된 물건 검수",
-        "tag":["success"],
-    },
-    {
-        "id":"3",
-        "name":"점주",
-        "date":"2022/10/05",
-        "time": "점주",
-        "todo":"물건 발주",
-        "tag":["success"],
-    },
-    {
-        "id":"4",
-        "name":"오상욱",
-        "date":"2022/10/06",
-        "time": "평일 오후",
-        "todo":"발주된 물건 검수",
-        "tag":["warning"],
-    },
-    {
-        "id":"5",
-        "name":"김현호",
-        "date":"2022/10/04",
-        "time": "평일 야간",
-        "todo":"새벽에 쓰레기통 비우기",
-        "tag":["error"],
-    },
-    {
-        "id":"6",
-        "name":"김인하",
-        "date":"2022/10/08",
-        "time": "주말 오전",
-        "todo":"오전 물건 진열하기",
-        "tag":["warning"],
-    },
-  ]
-  
+  const getTodo = () => {
+    axios.post('http://localhost:3001/getTodo').then((res) => {
+      dataArry = res.data;
+      getTableData(dataArry);
+    })
+  }
+
+  const getTableData = (dataArry) => {
+    dataArry.boardInfo.map((data, i) => {
+      let dataValue = {
+          "key":i.toString(),
+          "id":dataArry.boardInfo[i].id,
+          "name":dataArry.boardInfo[i].name,
+          "date":dataArry.boardInfo[i].date,
+          "time": dataArry.boardInfo[i].time,
+          "todo":dataArry.boardInfo[i].todo,
+          "tag":["success"]
+      };
+      console.log(dataValue);
+      setTodoData(todoData => [...todoData, dataValue]);
+    })
+  }
+
   const columns = [
     {
       title: '이름',
@@ -199,6 +197,10 @@ function Todo() {
     },
   ];
 
+  useEffect(() => {
+    getTodo()
+  }, []);
+
   return (
         <div>
           <div className="Header"><Header/></div>
@@ -216,7 +218,7 @@ function Todo() {
               </div>
               <div className="Title" style={{textAlign:'center'}}><h2>할 일 목록</h2></div>
               <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
-              <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={data} />
+              <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>
             <Modal title="할 일 작성" open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
             <div className="Form">
@@ -240,6 +242,18 @@ function Todo() {
                             rules={[
                             {
                                 message: 'Please input your username!',
+                            },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="날짜"
+                            name="date"
+                            rules={[
+                            {
+                                message: 'Please input your password!',
                             },
                             ]}
                         >
