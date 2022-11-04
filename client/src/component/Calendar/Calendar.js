@@ -3,7 +3,8 @@ import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Bu
 import Nav from "../Nav";
 import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function Calendar() {
 
@@ -59,12 +60,39 @@ function Calendar() {
             "tag":["warning"],
         },
     ]
-
+    // const [selectedDateTodoValue, setSelectedDateTodoValue] = useState([]);
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
     const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
     const [writeValue, setWriteValue] = useState("진행중");
+    const [todoData, setTodoData] = useState([]);
+
+    let dataArry = [];
+    let Arr = [];
+
+    const getTodo = () => {
+        axios.post('http://localhost:3001/getTodo').then((res) => {
+            dataArry = res.data;
+            getTableData(dataArry);
+        })
+    }
+
+    const getTableData = (dataArry) => {
+        dataArry.boardInfo.map((data, i) => {
+            let dataValue = {
+                "key":i.toString(),
+                "id":dataArry.boardInfo[i].id,
+                "name":dataArry.boardInfo[i].name,
+                "date":dataArry.boardInfo[i].date,
+                "time": dataArry.boardInfo[i].time,
+                "todo":dataArry.boardInfo[i].todo,
+                "tag":["success"]
+            };
+            console.log(dataValue);
+            setTodoData(todoData => [...todoData, dataValue]);
+        })
+    }
 
     const onSelectDateCell = (newValue) => {
         const dateData = moment(newValue._d);
@@ -79,16 +107,40 @@ function Calendar() {
     };
 
     const getTodoList = (data, selectedValue) => {
+        // setSelectedDateTodoValue(selectedDateTodoValue.filter(user => user.id !== id));
+        // 선택한 날짜의 할일만 필터링
         const TodoList = data.filter(data=>data.date === selectedValue)
-            .map(data => data);
+            .map(data => data.todo);
+        // 배열로 형식 수정
         const TodoArr = Object.entries(TodoList);
-        console.log(TodoArr);
-        // const Arr = [];
-        // TodoArr.map((todo) => 
-        //     Arr.push(todo[1])
-        // )
-        // setTodoList(Arr);
+        TodoArr.map((todo) => {
+            let value = {
+                key: todo[0],
+                todo: todo[1]
+            }
+            Arr.push(value)
+            console.log("value : "+value);
+            // setDataTodoValue(value);
+            // console.log("map : "+selectedDateTodoValue);
+        }
+            
+        )
+        console.log("Arr : "+Arr);
+        setDataTodoValue(Arr);
+        // console.log("Arr : "+Arr);
+        // setSelectedDateTodoValue((selectedDateTodoValue) => {
+        //     return Arr;
+        // })
+        // console.log("selectedDateTodoValue : "+selectedDateTodoValue);
     } 
+
+    const setDataTodoValue = (Arr) => {
+        // setSelectedDateTodoValue(Arr);
+        setTodoList(() => {
+            return Arr
+        });
+        console.log(todoList);
+    }
 
     const showListModal = () => {
         setisListModalOpen(true);
@@ -141,6 +193,10 @@ function Calendar() {
         console.log(todo);
     }
 
+    useEffect(() => {
+        getTodo()
+      },[]);
+
     return (
         <div>
             <div className="Header"><Header/></div>
@@ -170,7 +226,7 @@ function Calendar() {
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
                     {todoList.map((t) => (
-                            <li><Button type="link" onClick={() => enterList({t})} style={{color:'black'}}>{t}</Button></li>
+                            <li><Button type="link" key={t.key} onClick={() => enterList({t})} style={{color:'black'}}>{t.todo}</Button></li>
                         ))}
                     </ul>
                 </div>
