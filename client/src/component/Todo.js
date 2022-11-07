@@ -182,7 +182,7 @@ function Todo() {
       render: (_, { tag }) => (
         <>
           
-          {tag.map((tag) => {
+          {tag.map((tag, i) => {
             let color = tag === 'success' ? 'success' : 'error';
             let icon = tag === 'success' ? <CheckCircleOutlined /> : <CloseCircleOutlined />;
             let tagName = tag === 'success' ? '완료' :  '미완료';
@@ -195,7 +195,7 @@ function Todo() {
             }
   
             return (
-              <Tag key={tag.id} color={color} icon={icon}>
+              <Tag key={i} color={color} icon={icon}>
                 {tagName}
               </Tag>
             );

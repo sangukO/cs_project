@@ -1,7 +1,7 @@
 import Header from "../Header";
 import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
 import Nav from "../Nav";
-import moment from "moment";
+import moment, { now } from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -16,15 +16,33 @@ function Calendar() {
     const [writeValue, setWriteValue] = useState("진행중");
     const [todoData, setTodoData] = useState([]);
     const [loadData, setLoadData] = useState(false);
+    const [mountCount, setMountCount] = useState(0);
 
     let dataArray = [];
     let Arr = [];
+    
 
     const getTodo = () => {
         axios.post('http://localhost:3001/getTodo').then((res) => {
             dataArray = res.data;
             getTableData(dataArray);
+            //setisWriteModalOpen(false);
         })
+    }
+
+    //달력 셀 출력
+    const dateCellRender = (value) => {
+        const stringValue = value.format("YYYY/MM/DD");
+        const listData = todoData.filter(({date}) => date === stringValue);
+        return (
+            <ul className="events">
+                {listData.map((item, i) => (
+                    <li key={i}>
+                        <Badge status={item.tag} key={i} text={item.todo} />
+                    </li>
+                ))}
+            </ul>
+        )
     }
 
     const getTableData = (dataArray) => {
@@ -70,10 +88,8 @@ function Calendar() {
 
     const onSelectDateCell = (newValue) => {
         //누른 셀의 날짜값을 YYYY/MM/DD로 변환하여 selectedValue state에 저장
-        const dateData = moment(newValue._d);
-        setSelectedValue(dateData.format('YYYY/MM/DD'));
-        //일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장
-        console.log("todoList : "+ todoList);
+        const dateData = moment(newValue._d).format('YYYY/MM/DD');
+        setSelectedValue(dateData);
     };
 
     /** 일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장 */
@@ -147,21 +163,6 @@ function Calendar() {
         setisWriteModalOpen(false);
     };
 
-    //일정 출력
-    const dateCellRender = (value) => {
-        const stringValue = value.format("yyyy/MM/DD");
-        const listData = todoData.filter(({date}) => date === stringValue);
-        return (
-            <ul className="events">
-                {listData.map((item, i) => (
-                    <li key={i}>
-                        <Badge status={item.tag} key={i} text={item.todo} />
-                    </li>
-                ))}
-            </ul>
-        )
-    }
-
     const enterList = (todo) => {
         console.log(todo);
     }
@@ -182,13 +183,18 @@ function Calendar() {
     },[selectedValue])
 
     useEffect(() => {
-        if(todoList[0]===undefined) {
-            // 일정이 없다면 작성 모달 출력
-            showWriteModal();
-        }
-        else {
-            // 일정이 있다면 일정 리스트 모달 출력
-            showListModal();
+        // 첫 번째와 두 번째 달력 렌더링은 작성 모달 출력 x
+        if(mountCount != 2) {
+            setMountCount(mountCount+1);
+        } else if(mountCount == 2) {
+            if(todoList[0]===undefined) {
+                // 일정이 없다면 작성 모달 출력
+                showWriteModal();
+            }
+            else {
+                // 일정이 있다면 일정 리스트 모달 출력
+                showListModal();
+            }
         }
     },[todoList])
 
@@ -226,7 +232,7 @@ function Calendar() {
                     </ul>
                 </div>
             </Modal>
-            <Modal title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
+            <Modal forceRender title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
             <div className="Form">
                     <Form form={writeForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
