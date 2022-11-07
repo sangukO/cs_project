@@ -5,142 +5,94 @@ import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+    
 function Calendar() {
 
     const [writeForm] = Form.useForm();
-
-    const data = [
-        {
-            "id":"1",
-            "name":"점주",
-            "date":"2022/10/03",
-            "time": "점주",
-            "todo":"물건 발주",
-            "tag":["success"],
-        },
-        {
-            "id":"2",
-            "name":"오상욱",
-            "date":"2022/10/04",
-            "time": "평일 오후",
-            "todo":"발주된 물건 검수",
-            "tag":["success"],
-        },
-        {
-            "id":"3",
-            "name":"점주",
-            "date":"2022/10/05",
-            "time": "점주",
-            "todo":"물건 발주",
-            "tag":["success"],
-        },
-        {
-            "id":"4",
-            "name":"오상욱",
-            "date":"2022/10/06",
-            "time": "평일 오후",
-            "todo":"발주된 물건 검수",
-            "tag":["warning"],
-        },
-        {
-            "id":"5",
-            "name":"김현호",
-            "date":"2022/10/04",
-            "time": "평일 야간",
-            "todo":"새벽에 쓰레기통 비우기",
-            "tag":["error"],
-        },
-        {
-            "id":"6",
-            "name":"김인하",
-            "date":"2022/10/08",
-            "time": "주말 오전",
-            "todo":"오전 물건 진열하기",
-            "tag":["warning"],
-        },
-    ]
-    // const [selectedDateTodoValue, setSelectedDateTodoValue] = useState([]);
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
     const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
     const [writeValue, setWriteValue] = useState("진행중");
     const [todoData, setTodoData] = useState([]);
+    const [loadData, setLoadData] = useState(false);
 
-    let dataArry = [];
+    let dataArray = [];
     let Arr = [];
 
     const getTodo = () => {
         axios.post('http://localhost:3001/getTodo').then((res) => {
-            dataArry = res.data;
-            getTableData(dataArry);
+            dataArray = res.data;
+            getTableData(dataArray);
         })
     }
 
-    const getTableData = (dataArry) => {
-        dataArry.boardInfo.map((data, i) => {
-            let dataValue = {
-                "key":i.toString(),
-                "id":dataArry.boardInfo[i].id,
-                "name":dataArry.boardInfo[i].name,
-                "date":dataArry.boardInfo[i].date,
-                "time": dataArry.boardInfo[i].time,
-                "todo":dataArry.boardInfo[i].todo,
-                "tag":["success"]
-            };
-            console.log(dataValue);
-            setTodoData(todoData => [...todoData, dataValue]);
+    const getTableData = (dataArray) => {
+        dataArray.boardInfo.map((data, i) => {
+            if(dataArray.boardInfo[i].tag === "완료") {
+                let dataValue = {
+                    "key":i.toString(),
+                    "id":dataArray.boardInfo[i].id,
+                    "name":dataArray.boardInfo[i].name,
+                    "date":dataArray.boardInfo[i].date,
+                    "time": dataArray.boardInfo[i].time,
+                    "todo":dataArray.boardInfo[i].todo,
+                    "tag":["success"]
+                };
+                setTodoData(todoData => [...todoData, dataValue]);
+            }
+            if(dataArray.boardInfo[i].tag === "미완료") {
+                let dataValue = {
+                    "key":i.toString(),
+                    "id":dataArray.boardInfo[i].id,
+                    "name":dataArray.boardInfo[i].name,
+                    "date":dataArray.boardInfo[i].date,
+                    "time": dataArray.boardInfo[i].time,
+                    "todo":dataArray.boardInfo[i].todo,
+                    "tag":["error"]
+                };
+                setTodoData(todoData => [...todoData, dataValue]);
+            }
+            if(dataArray.boardInfo[i].tag === "진행중") {
+                let dataValue = {
+                    "key":i.toString(),
+                    "id":dataArray.boardInfo[i].id,
+                    "name":dataArray.boardInfo[i].name,
+                    "date":dataArray.boardInfo[i].date,
+                    "time": dataArray.boardInfo[i].time,
+                    "todo":dataArray.boardInfo[i].todo,
+                    "tag":["warning"]
+                };
+                setTodoData(todoData => [...todoData, dataValue]);
+            }
         })
     }
 
     const onSelectDateCell = (newValue) => {
+        //누른 셀의 날짜값을 YYYY/MM/DD로 변환하여 selectedValue state에 저장
         const dateData = moment(newValue._d);
         setSelectedValue(dateData.format('YYYY/MM/DD'));
-        getTodoList(data, selectedValue);
-        if(todoList[0]===undefined) {
-            showWriteModal();
-        }
-        else {
-            showListModal();
-        }
+        //일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장
+        console.log("todoList : "+ todoList);
     };
 
-    const getTodoList = (data, selectedValue) => {
-        // setSelectedDateTodoValue(selectedDateTodoValue.filter(user => user.id !== id));
-        // 선택한 날짜의 할일만 필터링
-        const TodoList = data.filter(data=>data.date === selectedValue)
-            .map(data => data.todo);
-        // 배열로 형식 수정
-        const TodoArr = Object.entries(TodoList);
-        TodoArr.map((todo) => {
+    /** 일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장 */
+    const getTodoList = (dataArray, selectedValue) => {
+        /** 선택한 날짜의 할일만 필터링한 객체 */
+        const TodoList = dataArray.filter(dataArray=>dataArray.date === selectedValue)
+            .map(dataArray => dataArray.todo);
+        /** 일정 개수만큼 반복, 객체 형식으로 배열에 추가 */
+        TodoList.map((data, i) => {
             let value = {
-                key: todo[0],
-                todo: todo[1]
+                key: i,
+                todo: data
             }
+            /** 일정 리스트 배열 추가 */
             Arr.push(value)
-            console.log("value : "+value);
-            // setDataTodoValue(value);
-            // console.log("map : "+selectedDateTodoValue);
-        }
-            
-        )
-        console.log("Arr : "+Arr);
-        setDataTodoValue(Arr);
-        // console.log("Arr : "+Arr);
-        // setSelectedDateTodoValue((selectedDateTodoValue) => {
-        //     return Arr;
-        // })
-        // console.log("selectedDateTodoValue : "+selectedDateTodoValue);
+        })
+        setLoadData(true);
+        setTodoList(Arr);
     } 
-
-    const setDataTodoValue = (Arr) => {
-        // setSelectedDateTodoValue(Arr);
-        setTodoList(() => {
-            return Arr
-        });
-        console.log(todoList);
-    }
 
     const showListModal = () => {
         setisListModalOpen(true);
@@ -156,9 +108,6 @@ function Calendar() {
 
 
     const showWriteModal = () => {
-        writeForm.setFieldsValue({
-        tag: "진행중",
-        });
         setisWriteModalOpen(true);
     };
 
@@ -167,6 +116,30 @@ function Calendar() {
     };
 
     const onWriteOk = () => {
+
+        let body = {
+          name : writeForm.getFieldValue(('name')),
+          date : writeForm.getFieldValue(('date')),
+          time : writeForm.getFieldValue(('time')),
+          todo : writeForm.getFieldValue(('todo')),
+          tag : writeForm.getFieldValue(('tag'))
+      }
+      
+        axios.post('http://localhost:3001/board', body).then((res) => {
+          console.log(res.data.success);
+          if(!res.data.success) {
+              /** res 보고 예외처리 꼼꼼하게 */
+              if(res.data.err.message) {
+                  console.log(res.data.err.message);
+              } else {
+                  alert("예외처리");
+              }
+          } else {
+            setTodoData([]);
+            dataArray = [];
+            getTodo();
+          }
+        })
         setisWriteModalOpen(false);
     };
 
@@ -174,15 +147,15 @@ function Calendar() {
         setisWriteModalOpen(false);
     };
 
-
+    //일정 출력
     const dateCellRender = (value) => {
         const stringValue = value.format("yyyy/MM/DD");
-        const listData = data.filter(({date}) => date === stringValue);
+        const listData = todoData.filter(({date}) => date === stringValue);
         return (
             <ul className="events">
-                {listData.map((item) => (
-                    <li key={item.todo}>
-                        <Badge status={item.tag} text={item.todo} />
+                {listData.map((item, i) => (
+                    <li key={i}>
+                        <Badge status={item.tag} key={i} text={item.todo} />
                     </li>
                 ))}
             </ul>
@@ -195,7 +168,29 @@ function Calendar() {
 
     useEffect(() => {
         getTodo()
-      },[]);
+    },[]);
+
+    useEffect(() => {
+        writeForm.setFieldsValue({
+            name: "",
+            date: selectedValue,
+            time: "",
+            todo: "",
+            tag: "진행중",
+        });
+        getTodoList(todoData, selectedValue);
+    },[selectedValue])
+
+    useEffect(() => {
+        if(todoList[0]===undefined) {
+            // 일정이 없다면 작성 모달 출력
+            showWriteModal();
+        }
+        else {
+            // 일정이 있다면 일정 리스트 모달 출력
+            showListModal();
+        }
+    },[todoList])
 
     return (
         <div>
@@ -225,8 +220,8 @@ function Calendar() {
             <Modal title={selectedValue} open={isListModalOpen} onOk={onListOk} onCancel={onListCancel}>
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
-                    {todoList.map((t) => (
-                            <li><Button type="link" key={t.key} onClick={() => enterList({t})} style={{color:'black'}}>{t.todo}</Button></li>
+                    {todoList.map((t, i) => (
+                            <li key={i} ><Button type="link" key={i} onClick={() => enterList({t})} style={{color:'black'}}>{t.todo}</Button></li>
                         ))}
                     </ul>
                 </div>
@@ -244,6 +239,7 @@ function Calendar() {
                         initialValues={{
                             remember: true,
                             tag : writeValue,
+                            date : {selectedValue}
                         }}
                     autoComplete="off"
                     >
@@ -257,6 +253,18 @@ function Calendar() {
                             ]}
                         >
                             <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="날짜"
+                            name="date"
+                            rules={[
+                            {
+                                message: 'Please input your password!',
+                            },
+                            ]}
+                        >
+                            <Input disabled />
                         </Form.Item>
 
                         <Form.Item

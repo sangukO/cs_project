@@ -113,17 +113,42 @@ function Todo() {
 
   const getTableData = (dataArry) => {
     dataArry.boardInfo.map((data, i) => {
-      let dataValue = {
-          "key":i.toString(),
-          "id":dataArry.boardInfo[i].id,
-          "name":dataArry.boardInfo[i].name,
-          "date":dataArry.boardInfo[i].date,
-          "time": dataArry.boardInfo[i].time,
-          "todo":dataArry.boardInfo[i].todo,
-          "tag":["success"]
-      };
-      console.log(dataValue);
-      setTodoData(todoData => [...todoData, dataValue]);
+            if(dataArry.boardInfo[i].tag === "완료") {
+                let dataValue = {
+                    "key":i.toString(),
+                    "id":dataArry.boardInfo[i].id,
+                    "name":dataArry.boardInfo[i].name,
+                    "date":dataArry.boardInfo[i].date,
+                    "time": dataArry.boardInfo[i].time,
+                    "todo":dataArry.boardInfo[i].todo,
+                    "tag":["success"]
+                };
+                setTodoData(todoData => [...todoData, dataValue]);
+            }
+            if(dataArry.boardInfo[i].tag === "미완료") {
+                let dataValue = {
+                    "key":i.toString(),
+                    "id":dataArry.boardInfo[i].id,
+                    "name":dataArry.boardInfo[i].name,
+                    "date":dataArry.boardInfo[i].date,
+                    "time": dataArry.boardInfo[i].time,
+                    "todo":dataArry.boardInfo[i].todo,
+                    "tag":["error"]
+                };
+                setTodoData(todoData => [...todoData, dataValue]);
+            }
+            if(dataArry.boardInfo[i].tag === "진행중") {
+                let dataValue = {
+                    "key":i.toString(),
+                    "id":dataArry.boardInfo[i].id,
+                    "name":dataArry.boardInfo[i].name,
+                    "date":dataArry.boardInfo[i].date,
+                    "time": dataArry.boardInfo[i].time,
+                    "todo":dataArry.boardInfo[i].todo,
+                    "tag":["warning"]
+                };
+                setTodoData(todoData => [...todoData, dataValue]);
+            }
     })
   }
 
