@@ -114,7 +114,7 @@ app.post('/logout', (req, res) => {
    })
 })
 
-// 기본 게시판
+// 기본 게시판 작성
 app.post('/board', (req, res) => {
   console.log(req.body)
   const board = new Board(req.body)
