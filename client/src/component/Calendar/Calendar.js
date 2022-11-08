@@ -1,7 +1,7 @@
 import Header from "../Header";
 import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
 import Nav from "../Nav";
-import moment, { now } from "moment";
+import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -108,7 +108,7 @@ function Calendar() {
         })
         setLoadData(true);
         setTodoList(Arr);
-    } 
+    }
 
     const showListModal = () => {
         setisListModalOpen(true);
@@ -140,13 +140,12 @@ function Calendar() {
           todo : writeForm.getFieldValue(('todo')),
           tag : writeForm.getFieldValue(('tag'))
       }
-      
+        // 게시판 작성 요청
         axios.post('http://localhost:3001/board', body).then((res) => {
-          console.log(res.data.success);
           if(!res.data.success) {
               /** res 보고 예외처리 꼼꼼하게 */
               if(res.data.err.message) {
-                  console.log(res.data.err.message);
+                  alert("에러 : " + res.data.err.message);
               } else {
                   alert("예외처리");
               }
@@ -163,7 +162,9 @@ function Calendar() {
         setisWriteModalOpen(false);
     };
 
+    /** 일정 리스트 중 하나 클릭 */
     const enterList = (todo) => {
+        // 구현 중, 디버그 코드 출력
         console.log(todo);
     }
 
@@ -223,6 +224,7 @@ function Calendar() {
                     />
                 </div>
             </div>
+
             <Modal title={selectedValue} open={isListModalOpen} onOk={onListOk} onCancel={onListCancel}>
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
@@ -232,6 +234,7 @@ function Calendar() {
                     </ul>
                 </div>
             </Modal>
+
             <Modal forceRender title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
             <div className="Form">
                     <Form form={writeForm} style={{width:'80%', margin:'auto'}}
