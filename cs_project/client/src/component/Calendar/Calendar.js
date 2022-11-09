@@ -13,6 +13,7 @@ function Calendar() {
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
+    const [_idOfTodo, set_idOfTodo] = useState("");
     const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
     const [writeValue, setWriteValue] = useState("진행중");
     const [todoData, setTodoData] = useState([]);
