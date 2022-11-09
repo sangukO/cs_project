@@ -164,7 +164,7 @@ function Calendar() {
 
     /** 일정 리스트 중 하나 클릭 */
     const enterMemoModal = (todoList) => {
-        // 구현 중, 디버그 코드 출력
+        // 구현 중, memoModal 출력
         setMemoModalTitle(todoList.todoList.todo);
         console.log(memoModalTitle);
         setisMemoModalOpen(true);
