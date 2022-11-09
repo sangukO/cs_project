@@ -1,15 +1,19 @@
 const express = require('express')
-const cors = require('cors') //cors 오류 해결
 const app = express()
+const cors = require('cors') //cors 오류 해결
 app.use(cors()); //cors 오류 해결
 
 const port = 3001;
 
+const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser');
 const { User } = require("./models/User");
+const { auth } = require("./middleware/auth");
 const { Board } = require("./models/Board");
+
 app.use(bodyParser.urlencoded({extended: true})); 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 //몽고디비 연결
 const mongoose = require('mongoose')
@@ -18,7 +22,6 @@ mongoose.connect("mongodb+srv://root:complicatedpassword@csproject.vjvtipf.mongo
     // useUnifiedTopology: true, 
     // useCreateIndex: true, 
     // useFindAndModify: false
-
 }).then(() => console.log('MongoDB Connected..'))
     .catch(err => console.log(err))
 
@@ -27,6 +30,7 @@ app.listen(port, () => {
 })
 
 //home
+
 app.get('/', (req, res) => {
   res.send('Hi, Back-end Page!')
 })
@@ -43,8 +47,7 @@ app.post('/register', (req, res) => {
   })
 })
 
-const cookieParser = require('cookie-parser')
-app.use(cookieParser());
+
 
 app.post('/login', (req, res) => {
   //params안의 userId 찾아서 비교
@@ -84,7 +87,6 @@ app.post('/login', (req, res) => {
   });
 })
 
-const { auth } = require("./middleware/auth");
 
 // 로그인 유저 정보 post로 바꿔보기
 app.get('/auth', auth, (req, res) => {
@@ -113,7 +115,7 @@ app.post('/logout', (req, res) => {
 
 // 기본 게시판 작성
 app.post('/board', (req, res) => {
-  console.log(req.body)
+  //console.log(req.body)
   const board = new Board(req.body)
   board.save((err, boardInfo) => {
     if(err) return res.json({success:false, err}) 
@@ -121,6 +123,7 @@ app.post('/board', (req, res) => {
   })
 })
 
+// 달력 데이터 받기
 app.post('/getTodo', (req, res) => {
 
   Board.find({}, (err, boardInfo) => {
@@ -130,11 +133,34 @@ app.post('/getTodo', (req, res) => {
 
 })
 
-app.post('/add', (req, res) => {
+// id 값 추가
+// app.post('/add', (req, res) => {
+//   res.send('전송완료');
+
+//   db.collection('counter').findOne({name : '총게시물개수'}, function(err, result){
+
+//     var totalPosts = result.totalPosts;
+
+//     db.collection('boards').insertOne({
+//       _id : totalPosts + 1, 
+//       date : req.body.date, 
+//       time : req.body.time,
+//       todo : req.body.todo, 
+//       tag : req.body.tag, 
+//       name : req.body.name}, function(err, result){
+//         console.log('게시물 저장')
+//       })
+      
+//   })
+
+// })
 
 
+app.post('/update', async (req, res) => {
 
-  
+  const { name, date, time, todo, tag, id} = req.body
+  await cs_project.updateOne({ id }, { $set: { name, date, time, todo, tag } });
+
 })
 
 
