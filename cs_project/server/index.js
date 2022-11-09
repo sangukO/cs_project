@@ -8,10 +8,7 @@ const port = 3001;
 const bodyParser = require('body-parser');
 const { User } = require("./models/User");
 const { Board } = require("./models/Board");
-// body-parser가 클라이언트에서 오는 정보를 서버에서 분석해서 가져올 수 있게 하는 것
-// application/x-www-form-urlencoded 이렇게 된 데이터를 분석해서 가져올 수 있게 해주는 것
 app.use(bodyParser.urlencoded({extended: true})); 
-//application/json으로 된 데이터를 가져올 수 있게 하는 기능
 app.use(bodyParser.json());
 
 //몽고디비 연결
@@ -132,3 +129,13 @@ app.post('/getTodo', (req, res) => {
   })
 
 })
+
+app.post('/add', (req, res) => {
+
+
+
+  
+})
+
+
+
