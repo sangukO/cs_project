@@ -158,10 +158,15 @@ app.post('/getTodo', (req, res) => {
 
 app.post('/update', async (req, res) => {
 
-  const { name, date, time, todo, tag, id} = req.body
-  await cs_project.updateOne({ id }, { $set: { name, date, time, todo, tag } });
+  const { name, date, time, todo, tag, _id} = req.body
+  await Board.updateOne({ _id }, { $set: { name, date, time, todo, tag } });
 
 })
+
+app.post("/delete", async (req, res) => {
+  const { _id } = req.body
+  await Board.deleteOne({ _id : _id})
+});
 
 
 
