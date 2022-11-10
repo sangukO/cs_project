@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
+
 //몽고디비 연결
 const mongoose = require('mongoose')
 mongoose.connect("mongodb+srv://root:complicatedpassword@csproject.vjvtipf.mongodb.net/cs_project", {
@@ -30,7 +31,6 @@ app.listen(port, () => {
 })
 
 //home
-
 app.get('/', (req, res) => {
   res.send('Hi, Back-end Page!')
 })
@@ -47,8 +47,7 @@ app.post('/register', (req, res) => {
   })
 })
 
-
-
+// login
 app.post('/login', (req, res) => {
   //params안의 userId 찾아서 비교
   User.findOne({userId: req.body.userId}, (err, user)=>{
@@ -87,7 +86,6 @@ app.post('/login', (req, res) => {
   });
 })
 
-
 // 로그인 유저 정보 post로 바꿔보기
 app.get('/auth', auth, (req, res) => {
   // 여기까지 미들웨어(auth.js)를 통과해 왔다는 얘기는 Authentication이 True라는 말
@@ -115,7 +113,6 @@ app.post('/logout', (req, res) => {
 
 // 기본 게시판 작성
 app.post('/board', (req, res) => {
-  //console.log(req.body)
   const board = new Board(req.body)
   board.save((err, boardInfo) => {
     if(err) return res.json({success:false, err}) 
@@ -123,14 +120,12 @@ app.post('/board', (req, res) => {
   })
 })
 
-// 달력 데이터 받기
 app.post('/getTodo', (req, res) => {
 
   Board.find({}, (err, boardInfo) => {
     return res.json({
       boardInfo})
   })
-
 })
 
 // id 값 추가
@@ -169,6 +164,4 @@ app.post("/delete", async (req, res) => {
   await Board.deleteOne({ _id : _id}) // merge
 
 });
-
-
 
