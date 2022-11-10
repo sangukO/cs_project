@@ -166,7 +166,7 @@ app.post('/update', async (req, res) => {
 app.post("/delete", async (req, res) => {
 
   const { _id } = req.body
-  await Board.deleteOne({ _id : _id}) // local, global email
+  await Board.deleteOne({ _id : _id}) // merge
 
 });
 
