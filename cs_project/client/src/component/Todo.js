@@ -18,6 +18,7 @@ function Todo() {
   const [writeForm] = Form.useForm();
   const [editForm] = Form.useForm();
   const [todoData, setTodoData] = useState([]);
+  const [_idOfTodo, set_idOfTodo] = useState("");
   let dataArry = [];
 
   const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
@@ -47,10 +48,9 @@ function Todo() {
       time : writeForm.getFieldValue(('time')),
       todo : writeForm.getFieldValue(('todo')),
       tag : writeForm.getFieldValue(('tag'))
-  }
+    }
   
     axios.post('http://localhost:3001/board', body).then((res) => {
-      console.log(res.data.success);
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -60,10 +60,10 @@ function Todo() {
           }
       } else {
           alert("작성이 완료되었습니다.");
-          // navigate('/Todo');
+          setisWriteModalOpen(false);
+
       }
     })
-  //  setisWriteModalOpen(false);
   };
 
   const onWriteCancel = () => {
@@ -73,10 +73,12 @@ function Todo() {
   const showEditModal = (record) => {
     editForm.setFieldsValue({
       name : record.name,
+      date : record.date,
       time : record.time,
       todo : record.todo,
       tag: record.tag[0],
     })
+    set_idOfTodo(record._id);
     setisEditModalOpen(true);
   };
 
@@ -85,6 +87,28 @@ function Todo() {
   };
 
   const onEditOk = () => {
+
+    let body = {
+      _id : _idOfTodo,
+      name : editForm.getFieldValue(('name')),
+      date : editForm.getFieldValue(('date')),
+      time : editForm.getFieldValue(('time')),
+      todo : editForm.getFieldValue(('todo')),
+      tag : editForm.getFieldValue(('tag'))
+    }
+
+    axios.post('http://localhost:3001/update', body).then((res) => {
+      if(!res.data.success) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              console.log(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+          alert("수정이 완료되었습니다.");
+      }
+    })
     setisEditModalOpen(false);
   };
 
@@ -92,11 +116,27 @@ function Todo() {
     setisEditModalOpen(false);
   };
 
-  const showDeleteModal = () => {
+  const showDeleteModal = (record) => {
+    set_idOfTodo(record._id);
     setisDeleteModalOpen(true);
   }
 
   const onDeleteOk = () => {
+    let body = {
+      _id : _idOfTodo
+    }
+    axios.post('http://localhost:3001/delete', body).then((res) => {
+      if(!res.data.success) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              console.log(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+          alert("삭제가 완료되었습니다.");
+      }
+    })
     setisDeleteModalOpen(false);
   };
 
@@ -116,6 +156,7 @@ function Todo() {
             if(dataArry.boardInfo[i].tag === "완료") {
                 let dataValue = {
                     "key":i.toString(),
+                    "_id":dataArry.boardInfo[i]._id,
                     "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
@@ -128,6 +169,7 @@ function Todo() {
             if(dataArry.boardInfo[i].tag === "미완료") {
                 let dataValue = {
                     "key":i.toString(),
+                    "_id":dataArry.boardInfo[i]._id,
                     "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
@@ -140,6 +182,7 @@ function Todo() {
             if(dataArry.boardInfo[i].tag === "진행중") {
                 let dataValue = {
                     "key":i.toString(),
+                    "_id":dataArry.boardInfo[i]._id,
                     "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
@@ -245,7 +288,7 @@ function Todo() {
               <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>
-            <Modal title="할 일 작성" open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
+            <Modal forceRender title="할 일 작성" open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
             <div className="Form">
                     <Form form={writeForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
@@ -322,7 +365,7 @@ function Todo() {
                     </Form>
                 </div>
             </Modal>
-            <Modal title="할 일 수정" open={isEditModalOpen} onOk={onEditOk} onCancel={onEditCancel}>
+            <Modal forceRender title="할 일 수정" open={isEditModalOpen} onOk={onEditOk} onCancel={onEditCancel}>
             <div className="Form">
                     <Form form={editForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
@@ -346,7 +389,19 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input className='name'/>
+                            <Input disabled className='name'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="날짜"
+                            name="date"
+                            rules={[
+                            {
+                                message: 'Please input your password!',
+                            },
+                            ]}
+                        >
+                            <Input />
                         </Form.Item>
 
                         <Form.Item
@@ -358,7 +413,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input className='time'/>
+                            <Input disabled className='time'/>
                         </Form.Item>
 
                         <Form.Item

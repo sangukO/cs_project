@@ -9,24 +9,25 @@ import axios from "axios";
 function Calendar() {
 
     const [writeForm] = Form.useForm();
+    const [memopForm] = Form.useForm();
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
+    const [_idOfTodo, set_idOfTodo] = useState("");
     const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
     const [writeValue, setWriteValue] = useState("진행중");
     const [todoData, setTodoData] = useState([]);
-    const [loadData, setLoadData] = useState(false);
     const [mountCount, setMountCount] = useState(0);
+    const [memoModalTitle, setMemoModalTitle] = useState("");
+    const [isMemoModalOpen, setisMemoModalOpen] = useState(false);
 
     let dataArray = [];
     let Arr = [];
-    
 
     const getTodo = () => {
-        axios.post('http://localhost:3001/getTodo').then((res) => {
+        axios.get('http://localhost:3001/getTodo').then((res) => {
             dataArray = res.data;
             getTableData(dataArray);
-            //setisWriteModalOpen(false);
         })
     }
 
@@ -90,7 +91,7 @@ function Calendar() {
         //누른 셀의 날짜값을 YYYY/MM/DD로 변환하여 selectedValue state에 저장
         const dateData = moment(newValue._d).format('YYYY/MM/DD');
         setSelectedValue(dateData);
-    };
+    }
 
     /** 일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장 */
     const getTodoList = (dataArray, selectedValue) => {
@@ -106,30 +107,29 @@ function Calendar() {
             /** 일정 리스트 배열 추가 */
             Arr.push(value)
         })
-        setLoadData(true);
         setTodoList(Arr);
     }
 
     const showListModal = () => {
         setisListModalOpen(true);
-    };
+    }
 
     const onListOk = () => {
         setisListModalOpen(false);
-    };
+    }
 
     const onListCancel = () => {
         setisListModalOpen(false);
-    };
+    }
 
 
     const showWriteModal = () => {
         setisWriteModalOpen(true);
-    };
+    }
 
     const onWriteStateChange = (e) => {
         setWriteValue(e.target.value);
-    };
+    }
 
     const onWriteOk = () => {
 
@@ -156,16 +156,26 @@ function Calendar() {
           }
         })
         setisWriteModalOpen(false);
-    };
+    }
 
     const onWriteCancel = () => {
         setisWriteModalOpen(false);
-    };
+    }
 
     /** 일정 리스트 중 하나 클릭 */
-    const enterList = (todo) => {
-        // 구현 중, 디버그 코드 출력
-        console.log(todo);
+    const enterMemoModal = (todoList) => {
+        // 구현 중, memoModal 출력
+        setMemoModalTitle(todoList.todoList.todo);
+        console.log(memoModalTitle);
+        setisMemoModalOpen(true);
+    }
+
+    const onMemoOk = () => {
+        setisMemoModalOpen(false);
+    }
+
+    const onMemoCancel = () => {
+        setisMemoModalOpen(false);
     }
 
     useEffect(() => {
@@ -228,8 +238,8 @@ function Calendar() {
             <Modal title={selectedValue} open={isListModalOpen} onOk={onListOk} onCancel={onListCancel}>
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
-                    {todoList.map((t, i) => (
-                            <li key={i} ><Button type="link" key={i} onClick={() => enterList({t})} style={{color:'black'}}>{t.todo}</Button></li>
+                    {todoList.map((todoList, i) => (
+                            <li key={i} ><Button type="link" key={i} onClick={() => enterMemoModal({todoList})} style={{color:'black'}}>{todoList.todo}</Button></li>
                         ))}
                     </ul>
                 </div>
@@ -311,6 +321,33 @@ function Calendar() {
                             </Radio.Group>
                         </Form.Item>
                     </Form>
+                </div>
+            </Modal>
+
+            <Modal title="Memo" open={isMemoModalOpen} onOk={onMemoOk} onCancel={onMemoCancel}>
+                <div className="TodoMemo">
+                    <div><p>{memoModalTitle}</p><hr/></div>
+                    <div className="Form">
+                    <Form form={memopForm} style={{margin:'auto'}}
+                        name="basic"
+                        initialValues={{
+                            remember: true,
+                        }}
+                    autoComplete="off"
+                    >
+                        <Form.Item
+                            label=""
+                            name="memo"
+                            rules={[
+                            {
+                                message: 'Please input your memo!',
+                            },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Form>
+                </div>
                 </div>
             </Modal>
         </div>
