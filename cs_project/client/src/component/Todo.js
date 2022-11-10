@@ -73,6 +73,7 @@ function Todo() {
   const showEditModal = (record) => {
     editForm.setFieldsValue({
       name : record.name,
+      date : record.date,
       time : record.time,
       todo : record.todo,
       tag: record.tag[0],
@@ -388,7 +389,19 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input className='name'/>
+                            <Input disabled className='name'/>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="날짜"
+                            name="date"
+                            rules={[
+                            {
+                                message: 'Please input your password!',
+                            },
+                            ]}
+                        >
+                            <Input />
                         </Form.Item>
 
                         <Form.Item
@@ -400,7 +413,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input className='time'/>
+                            <Input disabled className='time'/>
                         </Form.Item>
 
                         <Form.Item
