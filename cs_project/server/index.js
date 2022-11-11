@@ -1,18 +1,20 @@
 const express = require('express')
-const cors = require('cors') //cors 오류 해결
 const app = express()
+const cors = require('cors') //cors 오류 해결
 app.use(cors()); //cors 오류 해결
 
 const port = 3001;
 
+const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser');
 const { User } = require("./models/User");
+const { auth } = require("./middleware/auth");
 const { Board } = require("./models/Board");
-// body-parser가 클라이언트에서 오는 정보를 서버에서 분석해서 가져올 수 있게 하는 것
-// application/x-www-form-urlencoded 이렇게 된 데이터를 분석해서 가져올 수 있게 해주는 것
+
 app.use(bodyParser.urlencoded({extended: true})); 
-//application/json으로 된 데이터를 가져올 수 있게 하는 기능
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 
 //몽고디비 연결
 const mongoose = require('mongoose')
@@ -21,7 +23,6 @@ mongoose.connect("mongodb+srv://root:complicatedpassword@csproject.vjvtipf.mongo
     // useUnifiedTopology: true, 
     // useCreateIndex: true, 
     // useFindAndModify: false
-
 }).then(() => console.log('MongoDB Connected..'))
     .catch(err => console.log(err))
 
@@ -46,9 +47,7 @@ app.post('/register', (req, res) => {
   })
 })
 
-const cookieParser = require('cookie-parser')
-app.use(cookieParser());
-
+// login
 app.post('/login', (req, res) => {
   //params안의 userId 찾아서 비교
   User.findOne({userId: req.body.userId}, (err, user)=>{
@@ -87,8 +86,6 @@ app.post('/login', (req, res) => {
   });
 })
 
-const { auth } = require("./middleware/auth");
-
 // 로그인 유저 정보 post로 바꿔보기
 app.get('/auth', auth, (req, res) => {
   // 여기까지 미들웨어(auth.js)를 통과해 왔다는 얘기는 Authentication이 True라는 말
@@ -116,7 +113,6 @@ app.post('/logout', (req, res) => {
 
 // 기본 게시판 작성
 app.post('/board', (req, res) => {
-  console.log(req.body)
   const board = new Board(req.body)
   board.save((err, boardInfo) => {
     if(err) return res.json({success:false, err}) 
@@ -130,5 +126,42 @@ app.post('/getTodo', (req, res) => {
     return res.json({
       boardInfo})
   })
+})
+
+// id 값 추가
+// app.post('/add', (req, res) => {
+//   res.send('전송완료');
+
+//   db.collection('counter').findOne({name : '총게시물개수'}, function(err, result){
+
+//     var totalPosts = result.totalPosts;
+
+//     db.collection('boards').insertOne({
+//       _id : totalPosts + 1, 
+//       date : req.body.date, 
+//       time : req.body.time,
+//       todo : req.body.todo, 
+//       tag : req.body.tag, 
+//       name : req.body.name}, function(err, result){
+//         console.log('게시물 저장')
+//       })
+      
+//   })
+
+// })
+
+
+app.post('/update', async (req, res) => {
+
+  const { name, date, time, todo, tag, _id} = req.body
+  await Board.updateOne({ _id }, { $set: { name, date, time, todo, tag } });
 
 })
+
+app.post("/delete", async (req, res) => {
+
+  const { _id } = req.body
+  await Board.deleteOne({ _id : _id}) // merge
+
+});
+
