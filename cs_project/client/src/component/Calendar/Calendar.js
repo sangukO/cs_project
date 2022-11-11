@@ -9,7 +9,7 @@ import axios from "axios";
 function Calendar() {
 
     const [writeForm] = Form.useForm();
-    const [memopForm] = Form.useForm();
+    const [memoForm] = Form.useForm();
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
@@ -328,7 +328,7 @@ function Calendar() {
                 <div className="TodoMemo">
                     <div><p>{memoModalTitle}</p><hr/></div>
                     <div className="Form">
-                    <Form form={memopForm} style={{margin:'auto'}}
+                    <Form form={memoForm} style={{margin:'auto'}}
                         name="basic"
                         initialValues={{
                             remember: true,
