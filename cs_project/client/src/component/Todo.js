@@ -285,7 +285,8 @@ function Todo() {
                     <Breadcrumb.Item>ToDo</Breadcrumb.Item>
                   </Breadcrumb>
               </div>
-              <div className="Title" style={{textAlign:'center'}}><h2>할 일 목록</h2></div>
+              <div className="Margin" style={{height:"50px"}}></div>
+              <div className="Title" style={{textAlign:'center'}}><h1>할 일 목록</h1></div>
               <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>

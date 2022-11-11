@@ -25,7 +25,7 @@ function Calendar() {
     let Arr = [];
 
     const getTodo = () => {
-        axios.get('http://localhost:3001/getTodo').then((res) => {
+        axios.post('http://localhost:3001/getTodo').then((res) => {
             dataArray = res.data;
             getTableData(dataArray);
         })

@@ -5,6 +5,7 @@ import Home from './component/Home.js';
 import Join from './component/Join.js';
 import Todo from './component/Todo.js';
 import Calendar from "./component/Calendar/Calendar.js";
+import Staff from "./component/Staff.js";
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/todo" element={<Todo />} />
         <Route path="/calendar" element={<Calendar />} />
+        <Route path="/staff" element={<Staff />} />
       </Routes>
     </Router>
   );
