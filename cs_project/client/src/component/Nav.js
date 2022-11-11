@@ -14,7 +14,7 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem('공지 목록', '1', <NotificationOutlined />),
+  getItem(<Link to={"/Notice"}>공지 목록</Link>, '/Notice', <NotificationOutlined />),
   getItem(<Link to={"/Todo"}>업무 관리</Link>, '/Todo', <LaptopOutlined />),
   getItem(<Link to={"/Calendar"}>일정 관리</Link>, '/Calendar', <CalendarOutlined />),
   getItem(<Link to={"/Staff"}>직원 목록</Link>, '/Staff', <UserOutlined />),

@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import 'antd/dist/antd.min.css';
 import {  Breadcrumb, Button, Checkbox, Form, Input  } from 'antd';
-import  { useNavigate } from 'react-router-dom'; 
+import  { Link, useNavigate } from 'react-router-dom'; 
 import Header from "./Header";
 import Nav from "./Nav";
 import axios from 'axios';
@@ -43,7 +43,7 @@ function Login() {
                         margin: '20px 0 0 20px',
                     }}
                     >
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                         <Breadcrumb.Item>Login</Breadcrumb.Item>
                     </Breadcrumb>
                 </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import Header from "./Header";
 import Nav from "./Nav";
 import { Breadcrumb, Modal } from 'antd';
@@ -334,7 +335,7 @@ function Staff() {
                     margin: '20px 0 0 20px',
                   }}
                   >
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                     <Breadcrumb.Item>Staff</Breadcrumb.Item>
                   </Breadcrumb>
               </div>

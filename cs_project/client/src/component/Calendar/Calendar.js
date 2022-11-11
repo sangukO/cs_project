@@ -1,6 +1,7 @@
 import Header from "../Header";
 import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
 import Nav from "../Nav";
+import  { Link } from 'react-router-dom'; 
 import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
@@ -220,7 +221,7 @@ function Calendar() {
                         margin: '20px 0 0 20px',
                     }}
                     >
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                         <Breadcrumb.Item>Calendar</Breadcrumb.Item>
                     </Breadcrumb>
                 </div>

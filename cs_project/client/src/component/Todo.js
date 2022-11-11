@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import Header from "./Header";
 import Nav from "./Nav";
 import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
@@ -281,7 +282,7 @@ function Todo() {
                     margin: '20px 0 0 20px',
                   }}
                   >
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                     <Breadcrumb.Item>ToDo</Breadcrumb.Item>
                   </Breadcrumb>
               </div>
