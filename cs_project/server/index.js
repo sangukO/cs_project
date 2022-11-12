@@ -131,6 +131,7 @@ app.post('/getTodo', (req, res) => {
   })
 })
 
+
 // 게시판 수정
 app.post('/update', async (req, res) => {
 
@@ -165,10 +166,10 @@ app.post("/getWriterName", (req, res) => {
 
 // 메모 기능
 app.post('/memo', async (req, res) => {
-
   const { _id, memo } = req.body
   //console.log(id,memo)
   await Board.updateOne({ _id }, { $set: { memo } })
+
 
   if (!id) return res.json({ success: false, err })
   return res.status(200).json({ success: true })
