@@ -13,10 +13,6 @@ const userSchema = mongoose.Schema( {    // 스키마 세팅
     type: String,
     minlength: 5
   },
-  // passwordCk: {  // 지우기
-  //   type: String,
-  //   minlength: 5
-  // },
   username: {
     type: String,
     maxlength: 50
