@@ -9,7 +9,8 @@ import {
   CloseCircleOutlined,
   SyncOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  FormOutlined
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
 import axios from 'axios';
@@ -308,7 +309,7 @@ function Todo() {
               </div>
               <div className="Margin" style={{height:"50px"}}></div>
               <div className="Title" style={{textAlign:'center'}}><h1>할 일 목록</h1></div>
-              <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
+              <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}><FormOutlined />작성</Button></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>
             <Modal forceRender title="할 일 작성" open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
