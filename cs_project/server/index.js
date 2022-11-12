@@ -1,17 +1,18 @@
 const express = require('express')
 const app = express()
 const cors = require('cors') //cors 오류 해결
-app.use(cors()); //cors 오류 해결
+app.use(cors()) //cors 오류 해결
 
 const port = 3001;
 
 const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser');
-const { User } = require("./models/User");
-const { auth } = require("./middleware/auth");
-const { Board } = require("./models/Board");
+const bodyParser = require('body-parser')
+const { User } = require("./models/User")
+const { auth } = require("./middleware/auth")
+const { Board } = require("./models/Board")
+const { Notice } = require("./models/Notice")
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -111,7 +112,7 @@ app.post('/logout', (req, res) => {
   })
 })
 
-// 기본 게시판 작성
+// 게시판 작성
 app.post('/board', (req, res) => {
   const board = new Board(req.body)
   board.save((err, boardInfo) => {
@@ -120,6 +121,7 @@ app.post('/board', (req, res) => {
   })
 })
 
+// 게시판 조회
 app.post('/getTodo', (req, res) => {
 
   Board.find({}, (err, boardInfo) => {
@@ -129,6 +131,7 @@ app.post('/getTodo', (req, res) => {
   })
 })
 
+// 게시판 수정
 app.post('/update', async (req, res) => {
 
   const { name, date, time, todo, tag, _id } = req.body
@@ -139,6 +142,7 @@ app.post('/update', async (req, res) => {
 
 })
 
+// 게시판 삭제
 app.post("/delete", async (req, res) => {
 
   const { _id } = req.body
@@ -147,6 +151,7 @@ app.post("/delete", async (req, res) => {
   if (!_id) return res.json({ success: false, err })
   return res.status(200).json({ success: true })
 });
+
 
 app.post("/getWriterName", (req, res) => {
   User.findOne({ userId: req.body.userId }, (err, user) => {
@@ -161,9 +166,9 @@ app.post("/getWriterName", (req, res) => {
 // 메모 기능
 app.post('/memo', async (req, res) => {
 
-  const { id, memo } = req.body
+  const { _id, memo } = req.body
   //console.log(id,memo)
-  await Board.updateOne({ id }, { $set: { memo } })
+  await Board.updateOne({ _id }, { $set: { memo } })
 
   if (!id) return res.json({ success: false, err })
   return res.status(200).json({ success: true })
@@ -172,7 +177,7 @@ app.post('/memo', async (req, res) => {
 // 메모 값 가져오기
 app.post('/getMemo', (req, res) => {
 
-  Board.findOne({ id: req.body.id }, (err, board) => {
+  Board.findOne({ _id: req.body._id }, (err, board) => {
     if (board) {
       return res.status(200).json({
         memo : board.memo
@@ -181,3 +186,53 @@ app.post('/getMemo', (req, res) => {
     //console.log(memo)
   })
 })
+
+// 직원 조회
+app.post('/getUserInfo', (req, res) => {
+
+  User.find({}, (err, userInfo) => {
+    return res.json({
+      userInfo
+    })
+  })
+})
+
+// 공지 게시판 작성
+app.post('/notice', (req, res) => {
+  const notice = new Notice(req.body)
+  notice.save((err, noticeInfo) => {
+    if (err) return res.json({ success: false, err })
+    return res.status(200).json({ success: true })
+  })
+})
+
+// 공지 게시판 조회
+app.post('/getNoticeInfo', (req, res) => {
+
+  Notice.find({}, (err, noticeInfo) => {
+    return res.json({
+      noticeInfo
+    })
+  })
+})
+
+// 공지 게시판 수정
+app.post('/noticeUpdate', async (req, res) => {
+
+  const { writer, date, title, content, _id } = req.body
+  await Notice.updateOne({ _id }, { $set: { writer, date, title, content } });
+
+  if (!_id) return res.json({ success: false, err })
+  return res.status(200).json({ success: true })
+
+})
+
+// 공지 게시판 삭제
+app.post("/noticeDelete", async (req, res) => {
+
+  const { _id } = req.body
+  await Notice.deleteOne({ _id: _id })
+
+  if (!_id) return res.json({ success: false, err })
+  return res.status(200).json({ success: true })
+});
