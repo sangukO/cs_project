@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import Header from "./Header";
 import Nav from "./Nav";
 import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
@@ -71,13 +72,33 @@ function Todo() {
   };
 
   const showEditModal = (record) => {
-    editForm.setFieldsValue({
-      name : record.name,
-      date : record.date,
-      time : record.time,
-      todo : record.todo,
-      tag: record.tag[0],
-    })
+    if(record.tag[0]==="success") {
+      editForm.setFieldsValue({
+        name : record.name,
+        date : record.date,
+        time : record.time,
+        todo : record.todo,
+        tag : "완료",
+      })
+    }
+    if(record.tag[0]==="warning") {
+      editForm.setFieldsValue({
+        name : record.name,
+        date : record.date,
+        time : record.time,
+        todo : record.todo,
+        tag : "진행중",
+      })
+    }
+    if(record.tag[0]==="error") {
+      editForm.setFieldsValue({
+        name : record.name,
+        date : record.date,
+        time : record.time,
+        todo : record.todo,
+        tag : "미완료",
+      })
+    }
     set_idOfTodo(record._id);
     setisEditModalOpen(true);
   };
@@ -115,6 +136,7 @@ function Todo() {
   const onEditCancel = () => {
     setisEditModalOpen(false);
   };
+
   const showDeleteModal = (record) => {
     set_idOfTodo(record._id);
     setisDeleteModalOpen(true);
@@ -136,6 +158,7 @@ function Todo() {
           alert("삭제가 완료되었습니다.");
       }
     })
+
     setisDeleteModalOpen(false);
   };
 
@@ -272,18 +295,19 @@ function Todo() {
         <div>
           <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="Content" style={{float:"left", width:"80%"}}>
+            <div className="Content" style={{float:"left", width:"80%", paddingLeft:'5%', paddingRight:'5%'}}>
               <div className="Breadcrumb">
                   <Breadcrumb
                   style={{
                     margin: '20px 0 0 20px',
                   }}
                   >
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                     <Breadcrumb.Item>ToDo</Breadcrumb.Item>
                   </Breadcrumb>
               </div>
-              <div className="Title" style={{textAlign:'center'}}><h2>할 일 목록</h2></div>
+              <div className="Margin" style={{height:"50px"}}></div>
+              <div className="Title" style={{textAlign:'center'}}><h1>할 일 목록</h1></div>
               <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>
@@ -388,7 +412,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input disabled className='name'/>
+                            <Input readOnly={true} className='name'/>
                         </Form.Item>
 
                         <Form.Item
@@ -412,7 +436,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input disabled className='time'/>
+                            <Input readOnly={true} className='time'/>
                         </Form.Item>
 
                         <Form.Item
