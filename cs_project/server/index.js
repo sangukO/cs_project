@@ -165,3 +165,20 @@ app.post("/delete", async (req, res) => {
 
 });
 
+app.post("/getWriterName", (req, res) => {
+  User.findOne({userId: req.body.userId}, (err, user)=>{
+    if(user){
+      return res.status(200).json({
+          writerName: user.username
+      });
+    }
+  })
+})
+
+app.post("/delete", async (req, res) => {
+
+  const { _id } = req.body
+  await Board.deleteOne({ _id : _id}) // merge
+
+});
+

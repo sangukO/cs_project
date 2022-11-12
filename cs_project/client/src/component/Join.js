@@ -1,6 +1,6 @@
 import 'antd/dist/antd.min.css';
 import {  Breadcrumb, Button, Form, Input, InputNumber, Radio } from 'antd';
-import  { useNavigate } from 'react-router-dom'; 
+import  { Link, useNavigate } from 'react-router-dom'; 
 import Header from "./Header";
 import Nav from "./Nav";
 import axios from 'axios';
@@ -63,14 +63,14 @@ function Join() {
         <div className="Join">
             <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="Content" style={{float:"left", width:"80%"}}>
+            <div className="Content" style={{float:"left", width:"80%", paddingLeft:'5%', paddingRight:'5%'}}>
                 <div className="Breadcrumb">
                     <Breadcrumb
                     style={{
                         margin: '20px 0 0 20px',
                     }}
                     >
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                         <Breadcrumb.Item>Join</Breadcrumb.Item>
                     </Breadcrumb>
                 </div>

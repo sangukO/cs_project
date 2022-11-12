@@ -1,6 +1,7 @@
 import Header from "../Header";
 import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
 import Nav from "../Nav";
+import  { Link } from 'react-router-dom'; 
 import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
@@ -9,7 +10,7 @@ import axios from "axios";
 function Calendar() {
 
     const [writeForm] = Form.useForm();
-    const [memopForm] = Form.useForm();
+    const [memoForm] = Form.useForm();
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
@@ -25,7 +26,7 @@ function Calendar() {
     let Arr = [];
 
     const getTodo = () => {
-        axios.get('http://localhost:3001/getTodo').then((res) => {
+        axios.post('http://localhost:3001/getTodo').then((res) => {
             dataArray = res.data;
             getTableData(dataArray);
         })
@@ -214,14 +215,14 @@ function Calendar() {
         <div>
             <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="todo" style={{float:"left", width:"80%"}}>
+            <div className="Content" style={{float:"left", width:"80%", paddingLeft:'5%', paddingRight:'5%'}}>
                 <div className="Breadcrumb">
                     <Breadcrumb
                     style={{
                         margin: '20px 0 0 20px',
                     }}
                     >
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
+                        <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                         <Breadcrumb.Item>Calendar</Breadcrumb.Item>
                     </Breadcrumb>
                 </div>
@@ -284,7 +285,7 @@ function Calendar() {
                             },
                             ]}
                         >
-                            <Input disabled />
+                            <Input readOnly={true} />
                         </Form.Item>
 
                         <Form.Item
@@ -329,7 +330,7 @@ function Calendar() {
                 <div className="TodoMemo">
                     <div><p>{memoModalTitle}</p><hr/></div>
                     <div className="Form">
-                    <Form form={memopForm} style={{margin:'auto'}}
+                    <Form form={memoForm} style={{margin:'auto'}}
                         name="basic"
                         initialValues={{
                             remember: true,
