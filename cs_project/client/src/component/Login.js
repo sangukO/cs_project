@@ -28,7 +28,7 @@ function Login() {
     }
     
     const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
+        alert('Failed:', errorInfo);
     };
 
     return (

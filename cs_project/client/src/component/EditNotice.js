@@ -96,12 +96,11 @@ function WriteNotice() {
       content : editorRef.current?.getInstance().getHTML()
     }
   
-    console.log(body)
     // axios.post('http://localhost:3001/writeNotice', body).then((res) => {
     //   if(!res.data.success) {
     //       /** res 보고 예외처리 꼼꼼하게 */
     //       if(res.data.err.message) {
-    //           console.log(res.data.err.message);
+    //           alert(res.data.err.message);
     //       } else {
     //           alert("예외처리");
     //       }

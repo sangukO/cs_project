@@ -1,11 +1,17 @@
 import Header from "../Header";
 import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
+import 'antd/dist/antd.min.css';
 import Nav from "../Nav";
 import  { Link } from 'react-router-dom'; 
 import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import {
+    CloseOutlined,
+    CheckOutlined,
+    UndoOutlined
+  } from '@ant-design/icons';
     
 function Calendar() {
 
@@ -14,13 +20,14 @@ function Calendar() {
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
-    const [_idOfTodo, set_idOfTodo] = useState("");
     const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
     const [writeValue, setWriteValue] = useState("진행중");
     const [todoData, setTodoData] = useState([]);
     const [mountCount, setMountCount] = useState(0);
     const [memoModalTitle, setMemoModalTitle] = useState("");
+    const [memoModalMemo, setMemoModalMemo] = useState("");
     const [isMemoModalOpen, setisMemoModalOpen] = useState(false);
+    const { TextArea } = Input;
 
     let dataArray = [];
     let Arr = [];
@@ -163,15 +170,22 @@ function Calendar() {
         setisWriteModalOpen(false);
     }
 
-    /** 일정 리스트 중 하나 클릭 */
+    /** 일정 리스트 중 하나 클릭하여 메모 모달 출력 */
     const enterMemoModal = (todoList) => {
-        // 구현 중, memoModal 출력
         setMemoModalTitle(todoList.todoList.todo);
-        console.log(memoModalTitle);
+        setMemoModalMemo(todoList.todoList.memo);
+        memoForm.setFieldsValue({
+            memo:memoModalMemo
+        });
         setisMemoModalOpen(true);
     }
 
     const onMemoOk = () => {
+
+        let body = {
+            memo : memoForm.getFieldValue(('memo'))
+        }
+        //memo 등록 추가
         setisMemoModalOpen(false);
     }
 
@@ -236,12 +250,18 @@ function Calendar() {
                 </div>
             </div>
 
-            <Modal title={selectedValue} open={isListModalOpen} onOk={onListOk} onCancel={onListCancel}>
+            <Modal title={selectedValue} open={isListModalOpen} onCancel={onListCancel}
+                footer={[
+                    <Button key="back" onClick={onListCancel}>
+                        <UndoOutlined />취소
+                    </Button>,
+                    ]}
+            >
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
                     {todoList.map((todoList, i) => (
-                            <li key={i} ><Button type="link" key={i} onClick={() => enterMemoModal({todoList})} style={{color:'black'}}>{todoList.todo}</Button></li>
-                        ))}
+                        <li key={i} ><Button type="link" key={i} onClick={() => enterMemoModal({todoList})} style={{color:'black'}}>{todoList.todo}</Button></li>
+                    ))}
                     </ul>
                 </div>
             </Modal>
@@ -325,11 +345,20 @@ function Calendar() {
                 </div>
             </Modal>
 
-            <Modal title="Memo" open={isMemoModalOpen} onOk={onMemoOk} onCancel={onMemoCancel}>
+            <Modal title="Memo" open={isMemoModalOpen} onCancel={onMemoCancel}
+                footer={[
+                    <Button key="back" onClick={onMemoCancel}>
+                      <CloseOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={onMemoOk}>
+                      <CheckOutlined/>작성
+                    </Button>
+                  ]}
+            >
                 <div className="TodoMemo">
                     <div><p>{memoModalTitle}</p><hr/></div>
                     <div className="Form">
-                    <Form form={memoForm} style={{margin:'auto'}}
+                    <Form form={memoForm} style={{marginTop:'5%'}}
                         name="basic"
                         initialValues={{
                             remember: true,
@@ -339,13 +368,8 @@ function Calendar() {
                         <Form.Item
                             label=""
                             name="memo"
-                            rules={[
-                            {
-                                message: 'Please input your memo!',
-                            },
-                            ]}
                         >
-                            <Input />
+                            <TextArea autoSize={{ minRows: 4, maxRows: 8}} />
                         </Form.Item>
                     </Form>
                 </div>

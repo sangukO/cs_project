@@ -68,7 +68,6 @@ function Detail( {match} ) {
   const getNoticeDetail = () => {
     // 클릭한 공지와 _id가 같은 공지만 필터링
     const dataNoticeFilter = dataNotice.filter(({_id}) => _id === params._id);
-    console.log(dataNoticeFilter);
       let Notice = {
         "_id": dataNoticeFilter[0]._id,
         "title": dataNoticeFilter[0].title,

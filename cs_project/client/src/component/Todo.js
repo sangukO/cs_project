@@ -5,6 +5,8 @@ import Nav from "./Nav";
 import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
 import 'antd/dist/antd.min.css';
 import {
+  CloseOutlined,
+  CheckOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   SyncOutlined,
@@ -56,7 +58,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -123,7 +125,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -151,7 +153,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
