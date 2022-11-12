@@ -13,34 +13,46 @@ function Notice() {
 
   const dataNotice = [
     {
+      _id:"d6f4g3s1dg",
       writer:"점주",
       date:"2022/11/01 00:00",
       title:"포켓몬 빵 예약 판매 금지",
+      content:"예약해달라고 해도 안 됩니다."
     },
     {
+      _id:"7f9gh856",
       writer:"본사",
       date:"2022/11/07 00:00",
       title:"감사 캠페인 실천",
+      content:"웃는 모습으로 근무하기"
     },
     {
+      _id:"yu1mk3hg22",
       writer:"본사",
       date:"2022/11/07 12:00",
       title:"유니폼 및 명찰 착용 강화",
+      content:"유니폼과 명찰 꼭 착용해주세요."
     },
     {
+      _id:"98ytk74h2",
       writer:"점주",
       date:"2022/11/11 10:00",
       title:"빼빼로 판매 시 포장",
+      content:"카운터 아래 종이봉투 있습니다."
     },
     {
+      _id:"1y5dhf32u15",
       writer:"점주",
       date:"2022/11/11 13:00",
       title:"빼빼로 추가 진열",
+      content:"오늘 끝나기 전까지 추가로 진열해주세요."
     },
     {
+      _id:"12oyiug1h3",
       writer:"점주",
       date:"2022/11/12 00:00",
       title:"매장 청소 꼼꼼히 하기",
+      content:"신경 써주세요."
     },
   ];
 
@@ -56,6 +68,11 @@ function Notice() {
       title: '공지사항',
       dataIndex: 'title',
       key: 'title',
+      render: (_, record) => ( 
+        <Link key={record.key} to={`/Detail/${record._id}`} style={{color: 'black'}}>
+          {record.title}
+        </Link>
+      )
     },
     {
       title: '작성자',
@@ -73,6 +90,7 @@ function Notice() {
     dataNotice.map((data, i) => {
       let Notice = {
         "key": (i+1).toString(),
+        "_id": dataNotice[i]._id,
         "title": dataNotice[i].title,
         "writer": dataNotice[i].writer,
         "date":dataNotice[i].date
@@ -89,7 +107,7 @@ function Notice() {
         <div>
           <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="Content" style={{float:"left", width:"80%"}}>
+            <div className="Content" style={{float:"left", width:"80%", paddingLeft:'5%', paddingRight:'5%'}}>
               <div className="Breadcrumb">
                   <Breadcrumb
                   style={{

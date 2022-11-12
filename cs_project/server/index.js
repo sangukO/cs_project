@@ -165,3 +165,12 @@ app.post("/delete", async (req, res) => {
 
 });
 
+app.post("/getWriterName", (req, res) => {
+  User.findOne({userId: req.body.userId}, (err, user)=>{
+    if(user){
+      return res.status(200).json({
+          writerName: user.username
+      });
+    }
+  })
+})

@@ -328,7 +328,7 @@ function Staff() {
         <div>
           <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="Content" style={{float:"left", width:"80%"}}>
+            <div className="Content" style={{float:"left", width:"80%", paddingLeft:'5%', paddingRight:'5%'}}>
               <div className="Breadcrumb">
                   <Breadcrumb
                   style={{

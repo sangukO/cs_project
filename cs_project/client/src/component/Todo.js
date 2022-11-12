@@ -72,13 +72,33 @@ function Todo() {
   };
 
   const showEditModal = (record) => {
-    editForm.setFieldsValue({
-      name : record.name,
-      date : record.date,
-      time : record.time,
-      todo : record.todo,
-      tag: record.tag[0],
-    })
+    if(record.tag[0]==="success") {
+      editForm.setFieldsValue({
+        name : record.name,
+        date : record.date,
+        time : record.time,
+        todo : record.todo,
+        tag : "완료",
+      })
+    }
+    if(record.tag[0]==="warning") {
+      editForm.setFieldsValue({
+        name : record.name,
+        date : record.date,
+        time : record.time,
+        todo : record.todo,
+        tag : "진행중",
+      })
+    }
+    if(record.tag[0]==="error") {
+      editForm.setFieldsValue({
+        name : record.name,
+        date : record.date,
+        time : record.time,
+        todo : record.todo,
+        tag : "미완료",
+      })
+    }
     set_idOfTodo(record._id);
     setisEditModalOpen(true);
   };
@@ -275,7 +295,7 @@ function Todo() {
         <div>
           <div className="Header"><Header/></div>
             <div className="Nav" style={{float:"left"}}><Nav/></div>
-            <div className="Content" style={{float:"left", width:"80%"}}>
+            <div className="Content" style={{float:"left", width:"80%", paddingLeft:'5%', paddingRight:'5%'}}>
               <div className="Breadcrumb">
                   <Breadcrumb
                   style={{
@@ -392,7 +412,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input disabled className='name'/>
+                            <Input readOnly={true} className='name'/>
                         </Form.Item>
 
                         <Form.Item
@@ -416,7 +436,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input disabled className='time'/>
+                            <Input readOnly={true} className='time'/>
                         </Form.Item>
 
                         <Form.Item

@@ -8,6 +8,7 @@ import Calendar from "./component/Calendar/Calendar.js";
 import Staff from "./component/Staff.js";
 import Notice from "./component/Notice.js";
 import WriteNotice from "./component/WriteNotice.js";
+import Detail from "./component/Detail.js";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
         <Route path="/staff" element={<Staff />} />
         <Route path="/notice" element={<Notice />} />
         <Route path="/writenotice" element={<WriteNotice />} />
+        <Route path="/detail/:_id" element={<Detail />} />
       </Routes>
     </Router>
   );
