@@ -2,8 +2,8 @@ const mongoose = require('mongoose');    // mongoose 연결
 const autoIncrement = require('mongoose-auto-increment');
 autoIncrement.initialize(mongoose.connection);
 
-const boardSchema = mongoose.Schema( {    // 스키마 세팅
-  name: {
+const noticeSchema = mongoose.Schema( {    // 스키마 세팅
+  writer: {
     type: String,
 
   },
@@ -11,32 +11,23 @@ const boardSchema = mongoose.Schema( {    // 스키마 세팅
     type: String,
 
   },
-  time: {
+  title: { 
     type: String,
 
   },
-  todo: {
-    type: String,
-
-  },
-  memo: {
-    type: String,
-    default : ""
-
-  },
-  tag: {
+  content: { 
     type: String,
 
   }
 })
 
 //id값 자동 상승 게시물 구분
-boardSchema.plugin(autoIncrement.plugin, {
-  model: 'Board',
+noticeSchema.plugin(autoIncrement.plugin, {
+  model: 'notice',
   field: '_id',
   startAt: 1, //시작
   increment: 1 // 증가
 });
 
-const Board = mongoose.model('Board', boardSchema)
-module.exports = { Board }
+const Notice = mongoose.model('Notice', noticeSchema)
+module.exports = { Notice }

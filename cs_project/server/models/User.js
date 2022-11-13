@@ -2,6 +2,8 @@ const mongoose = require('mongoose');    // mongoose 연결
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require("jsonwebtoken");
+const autoIncrement = require('mongoose-auto-increment');
+autoIncrement.initialize(mongoose.connection);
 
 const userSchema = mongoose.Schema( {    // 스키마 세팅
   userId:  {
@@ -13,10 +15,6 @@ const userSchema = mongoose.Schema( {    // 스키마 세팅
     type: String,
     minlength: 5
   },
-  // passwordCk: {  // 지우기
-  //   type: String,
-  //   minlength: 5
-  // },
   username: {
     type: String,
     maxlength: 50
@@ -97,6 +95,14 @@ userSchema.statics.findByToken = function(token, cb) {
       })
   })
 }
+
+//id값 자동 상승 게시물 구분
+userSchema.plugin(autoIncrement.plugin, {
+  model: 'User',
+  field: '_id',
+  startAt: 1, //시작
+  increment: 1 // 증가
+});
 
 const User = mongoose.model('User', userSchema)  // 모델로 감싸주고
 module.exports = { User }

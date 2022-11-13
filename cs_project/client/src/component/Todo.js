@@ -139,7 +139,6 @@ function Todo() {
   const onEditCancel = () => {
     setisEditModalOpen(false);
   };
-
   const showDeleteModal = (record) => {
     set_idOfTodo(record._id);
     setisDeleteModalOpen(true);

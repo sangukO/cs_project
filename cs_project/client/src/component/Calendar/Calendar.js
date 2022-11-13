@@ -101,6 +101,7 @@ function Calendar() {
         setSelectedValue(dateData);
     }
 
+
     /** 일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장 */
     const getTodoList = (dataArray, selectedValue) => {
         /** 선택한 날짜의 할일만 필터링한 객체 */
@@ -187,6 +188,29 @@ function Calendar() {
         }
         //memo 등록 추가
         setisMemoModalOpen(false);
+
+        // 메모 내용
+        // let body = {
+        //     memo : writeForm.getFieldValue(('memo')),
+        // }
+
+
+        // axios.post('http://localhost:3001/memo', body).then((res) => {
+        //   if(!res.data.success) {
+        //       /** res 보고 예외처리 꼼꼼하게 */
+        //       if(res.data.err.message) {
+        //           alert("에러 : " + res.data.err.message);
+        //       } else {
+        //           alert("예외처리");
+        //       }
+        //   }
+        //   else {
+        //     setTodoData([]);
+        //     dataArray = [];
+        //     getTodo();
+        //   }
+        //})
+        // setisWriteModalOpen(false);
     }
 
     const onMemoCancel = () => {

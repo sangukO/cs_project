@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 
 const userId = undefined;
+const _id = undefined;
 
 function reducer(state = userId, action) {
   if (action.type === 'getId') {
