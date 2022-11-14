@@ -102,6 +102,7 @@ function Todo() {
         tag : "미완료",
       })
     }
+    console.log(record._id);
     set_idOfTodo(record._id);
     setisEditModalOpen(true);
   };
@@ -149,6 +150,7 @@ function Todo() {
       _id : _idOfTodo
     }
     axios.post('http://localhost:3001/delete', body).then((res) => {
+      console.log(res);
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -179,9 +181,9 @@ function Todo() {
     dataArry.boardInfo.map((data, i) => {
             if(dataArry.boardInfo[i].tag === "완료") {
                 let dataValue = {
-                    "key":i.toString(),
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
                     "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
                     "time": dataArry.boardInfo[i].time,
@@ -192,9 +194,9 @@ function Todo() {
             }
             if(dataArry.boardInfo[i].tag === "미완료") {
                 let dataValue = {
-                    "key":i.toString(),
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
                     "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
                     "time": dataArry.boardInfo[i].time,
@@ -205,9 +207,9 @@ function Todo() {
             }
             if(dataArry.boardInfo[i].tag === "진행중") {
                 let dataValue = {
-                    "key":i.toString(),
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
                     "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
                     "time": dataArry.boardInfo[i].time,
@@ -221,6 +223,13 @@ function Todo() {
 
   const columns = [
     {
+      title: '번호',
+      dataIndex: 'key',
+      key: 'key',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.key - b.key
+    },
+    {
       title: '이름',
       dataIndex: 'name',
       key: 'name',
@@ -229,8 +238,6 @@ function Todo() {
       title: '날짜',
       dataIndex: 'date',
       key: 'date',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: '시간',

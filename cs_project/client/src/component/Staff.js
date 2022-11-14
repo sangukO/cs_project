@@ -16,195 +16,10 @@ function Staff() {
 
   ChartJS.register(ArcElement, Tooltip, Legend);
   const [staffData, setStaffData] = useState([]);
+  const [dataTodo, setDataTodo] = useState([]);
   const [pieData, setPieDataState]  = useState([]);
   const [dataError, setDataError] = useState([]);
   const [staffName, setStaffName] = useState("");
-  const dataUser = [
-    {
-      _id:'sg231fsd3g4df5',
-      userId:'userid',
-      username:'점주',
-    },
-    {
-      _id:'wq52r13a48',
-      userId:'testaway',
-      username:'오상욱',
-    },
-    {
-      _id:'mhg132384tr',
-      userId:'test',
-      username:'김현호',
-    },
-    {
-      _id:'456kfdghlsn21',
-      userId:'testy',
-      username:'김인하',
-    },
-  ];
-
-  const dataTodo = [
-    {
-      "id":"1",
-      "name":"점주",
-      "date":"2022/10/03",
-      "time": "점주",
-      "todo":"물건 발주",
-      "tag":"완료",
-    },
-    {
-      "id":"2",
-      "name":"오상욱",
-      "date":"2022/10/04",
-      "time": "평일 오후",
-      "todo":"발주된 물건 검수",
-      "tag":"완료",
-    },
-    {
-      "id":"3",
-      "name":"점주",
-      "date":"2022/10/05",
-      "time": "점주",
-      "todo":"물건 발주",
-      "tag":"완료",
-    },
-    {
-      "id":"4",
-      "name":"오상욱",
-      "date":"2022/10/06",
-      "time": "평일 오후",
-      "todo":"발주된 물건 검수",
-      "tag":"완료",
-    },
-    {
-      "id":"5",
-      "name":"김현호",
-      "date":"2022/10/04",
-      "time": "평일 야간",
-      "todo":"새벽에 쓰레기통 비우기",
-      "tag":"미완료",
-    },
-    {
-      "id":"6",
-      "name":"김인하",
-      "date":"2022/10/08",
-      "time": "주말 오전",
-      "todo":"오전 물건 진열하기",
-      "tag":"미완료",
-    },
-    {
-      "id":"7",
-      "name":"오상욱",
-      "date":"2022/11/04",
-      "time": "주말 오전",
-      "todo":"테이블 청소하기",
-      "tag":"미완료",
-    },
-    {
-      "id":"8",
-      "name":"점주",
-      "date":"2022/11/07",
-      "time": "점주",
-      "todo":"빼빼로 발주하기",
-      "tag":"완료",
-    },
-    {
-      "id":"9",
-      "name":"김현호",
-      "date":"2022/11/09",
-      "time": "평일 오후",
-      "todo":"컵라면 용기 버리기",
-      "tag":"완료",
-    },
-    {
-      "id":"10",
-      "name":"오상욱",
-      "date":"2022/11/11",
-      "time": "평일 저녁",
-      "todo":"튀김기 청소하기",
-      "tag":"진행중",
-    },
-    {
-      "id":"11",
-      "name":"점주",
-      "date":"2022/11/01",
-      "time": "점주",
-      "todo":"물건 발주",
-      "tag":"완료",
-    },
-    {
-      "id":"12",
-      "name":"오상욱",
-      "date":"2022/11/02",
-      "time": "평일 오후",
-      "todo":"발주된 물건 검수",
-      "tag":"완료",
-    },
-    {
-      "id":"13",
-      "name":"점주",
-      "date":"2022/11/03",
-      "time": "점주",
-      "todo":"물건 발주",
-      "tag":"완료",
-    },
-    {
-      "id":"14",
-      "name":"오상욱",
-      "date":"2022/11/05",
-      "time": "평일 오후",
-      "todo":"발주된 물건 검수",
-      "tag":"미완료",
-    },
-    {
-      "id":"15",
-      "name":"김현호",
-      "date":"2022/11/05",
-      "time": "주말 야간",
-      "todo":"새벽에 쓰레기통 비우기",
-      "tag":"진행중",
-    },
-    {
-      "id":"16",
-      "name":"김인하",
-      "date":"2022/11/05",
-      "time": "주말 오전",
-      "todo":"오전 물건 진열하기",
-      "tag":"진행중",
-    },
-    {
-      "id":"17",
-      "name":"오상욱",
-      "date":"2022/11/06",
-      "time": "주말 오전",
-      "todo":"테이블 청소하기",
-      "tag":"미완료",
-    },
-    {
-      "id":"18",
-      "name":"점주",
-      "date":"2022/11/07",
-      "time": "점주",
-      "todo":"빼빼로 발주하기",
-      "tag":"미완료",
-    },
-    {
-      "id":"19",
-      "name":"김현호",
-      "date":"2022/11/09",
-      "time": "평일 오후",
-      "todo":"컵라면 용기 버리기",
-      "tag":"진행중",
-    },
-    {
-      "id":"20",
-      "name":"오상욱",
-      "date":"2022/11/11",
-      "time": "평일 저녁",
-      "todo":"튀김기 청소하기",
-      "tag":"진행중",
-    },
-  ]
-
   const [isPieModalOpen, setisPieModalOpen] = useState(false);
 
   const showPieModal = (record) => {
@@ -222,9 +37,40 @@ function Staff() {
     setisPieModalOpen(false);
   };
   
+  const getUserInfo = () => {
+    axios.post('http://localhost:3001/getUserInfo').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        getTableData(res.data.userInfo);
+      }
+    })
+  }
+
   const setPieData = (staffName) => {
 
     initDataError(staffName);
+
+    axios.post('http://localhost:3001/getTodo').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        setDataTodo(res.data.boardInfo);
+      }
+    })
+  }
+
+  const setPieChart = () => {
 
     let countSuccess = 0;
     let countWarning = 0;
@@ -278,13 +124,13 @@ function Staff() {
     setDataError(deletedDataError);
   }
 
-  const getTableData = (dataUser) => {
-    dataUser.map((data, i) => {
+  const getTableData = (staffData) => {
+    staffData.map((data, i) => {
       let dataValueUser = {
-        "key":i.toString(),
-        "_id":dataUser[i]._id,
-        "id":dataUser[i].userId,
-        "name":dataUser[i].username,
+        "key":(i+1).toString(),
+        "_id":staffData[i]._id,
+        "id":staffData[i].userId,
+        "name":staffData[i].username,
       };
       setStaffData(staffData => [...staffData, dataValueUser]);
     })
@@ -321,8 +167,12 @@ function Staff() {
   ];
 
   useEffect(() => {
-    getTableData(dataUser)
+    getUserInfo()
   }, []);
+
+  useEffect(() => {
+    setPieChart()
+  }, [dataTodo]);
 
   return (
         <div>

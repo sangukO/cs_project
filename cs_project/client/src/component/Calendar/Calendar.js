@@ -26,6 +26,7 @@ function Calendar() {
     const [mountCount, setMountCount] = useState(0);
     const [memoModalTitle, setMemoModalTitle] = useState("");
     const [memoModalMemo, setMemoModalMemo] = useState("");
+    const [memo_id, setMemo_id] = useState("");
     const [isMemoModalOpen, setisMemoModalOpen] = useState(false);
     const { TextArea } = Input;
 
@@ -58,36 +59,39 @@ function Calendar() {
         dataArray.boardInfo.map((data, i) => {
             if(dataArray.boardInfo[i].tag === "완료") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "id":dataArray.boardInfo[i].id,
+                    "key":(i+1).toString(),
+                    "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
+                    "memo":dataArray.boardInfo[i].memo,
                     "tag":["success"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
             }
             if(dataArray.boardInfo[i].tag === "미완료") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "id":dataArray.boardInfo[i].id,
+                    "key":(i+1).toString(),
+                    "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
+                    "memo":dataArray.boardInfo[i].memo,
                     "tag":["error"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
             }
             if(dataArray.boardInfo[i].tag === "진행중") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "id":dataArray.boardInfo[i].id,
+                    "key":(i+1).toString(),
+                    "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
+                    "memo":dataArray.boardInfo[i].memo,
                     "tag":["warning"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
@@ -105,13 +109,13 @@ function Calendar() {
     /** 일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장 */
     const getTodoList = (dataArray, selectedValue) => {
         /** 선택한 날짜의 할일만 필터링한 객체 */
-        const TodoList = dataArray.filter(dataArray=>dataArray.date === selectedValue)
-            .map(dataArray => dataArray.todo);
+        const TodoList = dataArray.filter(dataArray=>dataArray.date === selectedValue);
         /** 일정 개수만큼 반복, 객체 형식으로 배열에 추가 */
         TodoList.map((data, i) => {
             let value = {
-                key: i,
-                todo: data
+                key: i+1,
+                todo: data.todo,
+                memo: data.memo
             }
             /** 일정 리스트 배열 추가 */
             Arr.push(value)
@@ -175,46 +179,36 @@ function Calendar() {
     const enterMemoModal = (todoList) => {
         setMemoModalTitle(todoList.todoList.todo);
         setMemoModalMemo(todoList.todoList.memo);
-        memoForm.setFieldsValue({
-            memo:memoModalMemo
-        });
+        setisListModalOpen(false);
         setisMemoModalOpen(true);
+        
     }
 
     const onMemoOk = () => {
 
+        console.log(memo_id);
         let body = {
+            _id : memo_id,
             memo : memoForm.getFieldValue(('memo'))
         }
-        //memo 등록 추가
-        setisMemoModalOpen(false);
 
-        // 메모 내용
-        // let body = {
-        //     memo : writeForm.getFieldValue(('memo')),
-        // }
+        axios.post('http://localhost:3001/memo', body).then((res) => {
 
+            if(!res.data.success) {
+                /** res 보고 예외처리 꼼꼼하게 */
+                if(res.data.err.message) {
+                    alert("에러 : " + res.data.err.message);
+                } else {
+                    alert("예외처리");
+                }
+            }
+          })
 
-        // axios.post('http://localhost:3001/memo', body).then((res) => {
-        //   if(!res.data.success) {
-        //       /** res 보고 예외처리 꼼꼼하게 */
-        //       if(res.data.err.message) {
-        //           alert("에러 : " + res.data.err.message);
-        //       } else {
-        //           alert("예외처리");
-        //       }
-        //   }
-        //   else {
-        //     setTodoData([]);
-        //     dataArray = [];
-        //     getTodo();
-        //   }
-        //})
-        // setisWriteModalOpen(false);
     }
 
     const onMemoCancel = () => {
         setisMemoModalOpen(false);
+        setisListModalOpen(true);
     }
 
     useEffect(() => {
@@ -247,6 +241,12 @@ function Calendar() {
             }
         }
     },[todoList])
+
+    useEffect(() => {
+        memoForm.setFieldsValue({
+            memo:memoModalMemo
+        });
+    },[memoModalMemo])
 
     return (
         <div>
@@ -369,7 +369,7 @@ function Calendar() {
                 </div>
             </Modal>
 
-            <Modal title="Memo" open={isMemoModalOpen} onCancel={onMemoCancel}
+            <Modal forceRender title="Memo" open={isMemoModalOpen} onCancel={onMemoCancel}
                 footer={[
                     <Button key="back" onClick={onMemoCancel}>
                       <CloseOutlined/>취소
