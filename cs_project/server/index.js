@@ -131,14 +131,13 @@ app.post('/getTodo', (req, res) => {
   })
 })
 
-
 // 게시판 수정
 app.post('/update', async (req, res) => {
 
   const { name, date, time, todo, tag, _id } = req.body
   await Board.updateOne({ _id }, { $set: { name, date, time, todo, tag } });
 
-  if (!_id) return res.json({ success: false, err })
+  if (!_id) return res.status(404).json({ message: '오류' });
   return res.status(200).json({ success: true })
 
 })
@@ -149,7 +148,7 @@ app.post("/delete", async (req, res) => {
   const { _id } = req.body
   await Board.deleteOne({ _id: _id })
 
-  if (!_id) return res.json({ success: false, err })
+  if (!_id) return res.status(404).json({ message: '오류' });
   return res.status(200).json({ success: true })
 });
 
@@ -166,12 +165,12 @@ app.post("/getWriterName", (req, res) => {
 
 // 메모 기능
 app.post('/memo', async (req, res) => {
+
   const { _id, memo } = req.body
   //console.log(id,memo)
   await Board.updateOne({ _id }, { $set: { memo } })
 
-
-  if (!id) return res.json({ success: false, err })
+  if (!_id) return res.status(404).json({ message: '오류' });
   return res.status(200).json({ success: true })
 })
 
@@ -202,7 +201,7 @@ app.post('/getUserInfo', (req, res) => {
 app.post('/notice', (req, res) => {
   const notice = new Notice(req.body)
   notice.save((err, noticeInfo) => {
-    if (err) return res.json({ success: false, err })
+    if (!_id) return res.status(404).json({ message: '오류' });
     return res.status(200).json({ success: true })
   })
 })
@@ -223,7 +222,7 @@ app.post('/noticeUpdate', async (req, res) => {
   const { writer, date, title, content, _id } = req.body
   await Notice.updateOne({ _id }, { $set: { writer, date, title, content } });
 
-  if (!_id) return res.json({ success: false, err })
+  if (!_id) return res.status(404).json({ message: '오류' });
   return res.status(200).json({ success: true })
 
 })
@@ -234,6 +233,10 @@ app.post("/noticeDelete", async (req, res) => {
   const { _id } = req.body
   await Notice.deleteOne({ _id: _id })
 
-  if (!_id) return res.json({ success: false, err })
+  if (!_id) return res.status(404).json({ message: '오류' });
   return res.status(200).json({ success: true })
 });
+
+// 미완성 태그 전달
+// 차트 띄우기
+
