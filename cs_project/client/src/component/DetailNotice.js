@@ -13,7 +13,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import '@toast-ui/editor/dist/i18n/ko-kr';
 import 'moment/locale/ko';
 
-function Detail( {match} ) {
+function Detail() {
 
   const dataNotice = [
     {
@@ -78,7 +78,6 @@ function Detail( {match} ) {
       setNoticeDetail(Notice)
     }
   
-
   useEffect(() => {
     // 공지 상세 데이터 불러오기
     getNoticeDetail()
@@ -116,7 +115,7 @@ function Detail( {match} ) {
             <div style={{float:"right"}}>
               <div style={{float:"left"}}><Button type="primary" ghost onClick={() => navigate(`/Notice`)}><OrderedListOutlined />목록</Button></div>
               <div style={{float:"left", width:"20px", height:"5px"}}></div>
-              <div style={{float:"left"}}><Button type="primary"><EditOutlined />수정</Button></div>
+              <div style={{float:"left"}}><Link to={`/EditNotice/${params._id}`}><Button type="primary"><EditOutlined />수정</Button></Link></div>
             </div>
           </div>
         </div>

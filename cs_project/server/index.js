@@ -167,7 +167,7 @@ app.post("/getWriterName", (req, res) => {
 app.post('/memo', async (req, res) => {
 
   const { _id, memo } = req.body
-  //console.log(id,memo)
+  console.log(_id,memo)
   await Board.updateOne({ _id }, { $set: { memo } })
 
   if (!_id) return res.status(404).json({ message: '오류' });

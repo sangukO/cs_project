@@ -4,6 +4,9 @@ import Header from "./Header";
 import Nav from "./Nav";
 import { Breadcrumb, Button } from 'antd';
 import 'antd/dist/antd.min.css';
+import {
+  FormOutlined
+} from '@ant-design/icons';
 import { Table } from 'antd';
 import axios from 'axios';
 
@@ -69,7 +72,7 @@ function Notice() {
       dataIndex: 'title',
       key: 'title',
       render: (_, record) => ( 
-        <Link key={record.key} to={`/Detail/${record._id}`} style={{color: 'black'}}>
+        <Link key={record.key} to={`/DetailNotice/${record._id}`} style={{color: 'black'}}>
           {record.title}
         </Link>
       )
@@ -120,7 +123,7 @@ function Notice() {
               </div>
               <div className="Margin" style={{height:"50px"}}></div>
               <div className="Title" style={{textAlign:'center'}}><h1>공지 목록</h1></div>
-              <div style={{float:"right", margin:'0 5px 20px 0'}}><Link to={"/WriteNotice"}><Button type="primary">작성</Button></Link></div>
+              <div style={{float:"right", margin:'0 5px 20px 0'}}><Link to={"/WriteNotice"}><Button type="primary"><FormOutlined />작성</Button></Link></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={noticeData}/>
             </div>
         </div>

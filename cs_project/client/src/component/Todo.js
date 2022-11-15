@@ -5,11 +5,14 @@ import Nav from "./Nav";
 import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
 import 'antd/dist/antd.min.css';
 import {
+  CloseOutlined,
+  CheckOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   SyncOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  FormOutlined
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
 import axios from 'axios';
@@ -55,7 +58,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -99,6 +102,7 @@ function Todo() {
         tag : "미완료",
       })
     }
+    console.log(record._id);
     set_idOfTodo(record._id);
     setisEditModalOpen(true);
   };
@@ -122,7 +126,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -146,10 +150,11 @@ function Todo() {
       _id : _idOfTodo
     }
     axios.post('http://localhost:3001/delete', body).then((res) => {
+      console.log(res);
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -176,9 +181,9 @@ function Todo() {
     dataArry.boardInfo.map((data, i) => {
             if(dataArry.boardInfo[i].tag === "완료") {
                 let dataValue = {
-                    "key":i.toString(),
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
                     "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
                     "time": dataArry.boardInfo[i].time,
@@ -189,9 +194,9 @@ function Todo() {
             }
             if(dataArry.boardInfo[i].tag === "미완료") {
                 let dataValue = {
-                    "key":i.toString(),
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
                     "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
                     "time": dataArry.boardInfo[i].time,
@@ -202,9 +207,9 @@ function Todo() {
             }
             if(dataArry.boardInfo[i].tag === "진행중") {
                 let dataValue = {
-                    "key":i.toString(),
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
                     "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
                     "name":dataArry.boardInfo[i].name,
                     "date":dataArry.boardInfo[i].date,
                     "time": dataArry.boardInfo[i].time,
@@ -218,6 +223,13 @@ function Todo() {
 
   const columns = [
     {
+      title: '번호',
+      dataIndex: 'key',
+      key: 'key',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.key - b.key
+    },
+    {
       title: '이름',
       dataIndex: 'name',
       key: 'name',
@@ -226,8 +238,6 @@ function Todo() {
       title: '날짜',
       dataIndex: 'date',
       key: 'date',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: '시간',
@@ -307,7 +317,7 @@ function Todo() {
               </div>
               <div className="Margin" style={{height:"50px"}}></div>
               <div className="Title" style={{textAlign:'center'}}><h1>할 일 목록</h1></div>
-              <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
+              <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}><FormOutlined />작성</Button></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>
             <Modal forceRender title="할 일 작성" open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
