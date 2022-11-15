@@ -114,6 +114,7 @@ function Calendar() {
         TodoList.map((data, i) => {
             let value = {
                 key: i+1,
+                _id: data._id,
                 todo: data.todo,
                 memo: data.memo
             }
@@ -145,7 +146,6 @@ function Calendar() {
     }
 
     const onWriteOk = () => {
-
         let body = {
           name : writeForm.getFieldValue(('name')),
           date : writeForm.getFieldValue(('date')),
@@ -178,6 +178,7 @@ function Calendar() {
     /** 일정 리스트 중 하나 클릭하여 메모 모달 출력 */
     const enterMemoModal = (todoList) => {
         setMemoModalTitle(todoList.todoList.todo);
+        setMemo_id(todoList.todoList._id);
         setMemoModalMemo(todoList.todoList.memo);
         setisListModalOpen(false);
         setisMemoModalOpen(true);
@@ -185,15 +186,11 @@ function Calendar() {
     }
 
     const onMemoOk = () => {
-
-        console.log(memo_id);
         let body = {
             _id : memo_id,
             memo : memoForm.getFieldValue(('memo'))
         }
-
         axios.post('http://localhost:3001/memo', body).then((res) => {
-
             if(!res.data.success) {
                 /** res 보고 예외처리 꼼꼼하게 */
                 if(res.data.err.message) {
@@ -202,13 +199,16 @@ function Calendar() {
                     alert("예외처리");
                 }
             }
-          })
-
+        })
     }
 
     const onMemoCancel = () => {
         setisMemoModalOpen(false);
         setisListModalOpen(true);
+        setTodoData([]);
+        dataArray = [];
+        getTodo();
+        getTodoList(todoData, selectedValue);
     }
 
     useEffect(() => {
