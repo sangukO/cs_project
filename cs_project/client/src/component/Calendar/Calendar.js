@@ -182,6 +182,7 @@ function Calendar() {
         setMemoModalMemo(todoList.todoList.memo);
         setisListModalOpen(false);
         setisMemoModalOpen(true);
+        
     }
 
     const onMemoOk = () => {
