@@ -26,89 +26,66 @@ function WriteNotice() {
   const [editContent, setEditContent] = useState("");
   const [mountCount, setMountCount] = useState(0);
   let content = ""
+  let noticeDetailArry = [];
+  const [loading, setLoading] = useState(true);
 
-  const dataNotice = [
-    {
-      _id:"d6f4g3s1dg",
-      writer:"점주",
-      date:"2022/11/01 00:00",
-      title:"포켓몬 빵 예약 판매 금지",
-      content:"예약해달라고 해도 안 됩니다."
-    },
-    {
-      _id:"7f9gh856",
-      writer:"본사",
-      date:"2022/11/07 00:00",
-      title:"감사 캠페인 실천",
-      content:"웃는 모습으로 근무하기"
-    },
-    {
-      _id:"yu1mk3hg22",
-      writer:"본사",
-      date:"2022/11/07 12:00",
-      title:"유니폼 및 명찰 착용 강화",
-      content:"유니폼과 명찰 꼭 착용해주세요."
-    },
-    {
-      _id:"98ytk74h2",
-      writer:"점주",
-      date:"2022/11/11 10:00",
-      title:"빼빼로 판매 시 포장",
-      content:"카운터 아래 종이봉투 있습니다."
-    },
-    {
-      _id:"1y5dhf32u15",
-      writer:"점주",
-      date:"2022/11/11 13:00",
-      title:"빼빼로 추가 진열",
-      content:"오늘 끝나기 전까지 추가로 진열해주세요."
-    },
-    {
-      _id:"12oyiug1h3",
-      writer:"점주",
-      date:"2022/11/12 00:00",
-      title:"매장 청소 꼼꼼히 하기",
-      content:"신경 써주세요."
-    },
-  ];
-
+  /** 공지 상세 데이터 불러오기 */
   const getNoticeDetail = () => {
+    let body = {
+      _id: params._id
+    }
 
-    // 클릭한 공지와 _id가 같은 공지만 필터링
-    const dataNoticeFilter = dataNotice.filter(({_id}) => _id === params._id);
-      let Notice = {
-        "_id": dataNoticeFilter[0]._id,
-        "title": dataNoticeFilter[0].title,
-        "writer": dataNoticeFilter[0].writer,
-        "date":dataNoticeFilter[0].date,
-        "content":dataNoticeFilter[0].content
+    axios.post('http://localhost:3001/getNoticeDetail', body).then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        noticeDetailArry = res.data.noticeDetail;
+        getNoticeDetailData(noticeDetailArry);
       }
-      setNoticeDetail(Notice)
+    })
+  }
+
+  const getNoticeDetailData = (noticeDetailArry) => {
+    let Notice = {
+      "_id": noticeDetailArry._id,
+      "title": noticeDetailArry.title,
+      "writer": noticeDetailArry.writer,
+      "date":noticeDetailArry.date,
+      "content":noticeDetailArry.content
+    }
+    setNoticeDetail(Notice);
+    setLoading(false);
   }
 
   /** 글 작성 버튼 클릭 */
   const onClickSubmit = () => {
 
     let body = {
-      name : noticeDetail.writer,
-      date : moment().format('YYYY/MM/DD HH:mm'),
-      title : editForm.getFieldValue(('title')),
-      content : editorRef.current?.getInstance().getHTML()
+      _id: params._id,
+      writer: noticeDetail.writer,
+      date: moment().format('YYYY/MM/DD HH:mm'),
+      title: editForm.getFieldValue(('title')),
+      content: editorRef.current?.getInstance().getHTML()
     }
   
-    // axios.post('http://localhost:3001/writeNotice', body).then((res) => {
-    //   if(!res.data.success) {
-    //       /** res 보고 예외처리 꼼꼼하게 */
-    //       if(res.data.err.message) {
-    //           alert(res.data.err.message);
-    //       } else {
-    //           alert("예외처리");
-    //       }
-    //   } else {
-    //       alert("작성이 완료되었습니다.");
-    //       navigate(`/Notice`);
-    //   }
-    // })
+    axios.post('http://localhost:3001/noticeUpdate', body).then((res) => {
+      if(!res.data.success) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+          alert("수정이 완료되었습니다.");
+          navigate(`/DetailNotice/${params._id}`);
+      }
+    })
   }
 
   useEffect(() => {

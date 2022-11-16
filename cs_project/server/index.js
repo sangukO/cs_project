@@ -152,7 +152,6 @@ app.post("/delete", async (req, res) => {
   return res.status(200).json({ success: true })
 });
 
-
 app.post("/getWriterName", (req, res) => {
   User.findOne({ userId: req.body.userId }, (err, user) => {
     if (user) {
@@ -201,7 +200,7 @@ app.post('/getUserInfo', (req, res) => {
 app.post('/notice', (req, res) => {
   const notice = new Notice(req.body)
   notice.save((err, noticeInfo) => {
-    if (!_id) return res.status(404).json({ message: '오류' });
+    if (!notice) return res.status(404).json({ message: '오류' });
     return res.status(200).json({ success: true })
   })
 })
@@ -212,6 +211,16 @@ app.post('/getNoticeInfo', (req, res) => {
   Notice.find({}, (err, noticeInfo) => {
     return res.json({
       noticeInfo
+    })
+  })
+})
+
+// 공지 상세 조회
+app.post('/getNoticeDetail', (req, res) => {
+
+  Notice.findOne({ _id: req.body._id }, (err, noticeDetail) => {
+    return res.json({
+      noticeDetail
     })
   })
 })
