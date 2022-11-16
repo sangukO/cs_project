@@ -203,6 +203,8 @@ function Calendar() {
                 }
             } else {
                 alert(memoAlert);
+                setisMemoModalOpen(false);
+                setisListModalOpen(false);
             }
         })
     }
