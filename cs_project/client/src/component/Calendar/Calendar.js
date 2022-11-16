@@ -128,10 +128,6 @@ function Calendar() {
         setisListModalOpen(true);
     }
 
-    const onListOk = () => {
-        setisListModalOpen(false);
-    }
-
     const onListCancel = () => {
         setisListModalOpen(false);
     }
@@ -186,9 +182,16 @@ function Calendar() {
     }
 
     const onMemoOk = () => {
+        let memoDetail = memoForm.getFieldValue(('memo'))
         let body = {
             _id : memo_id,
-            memo : memoForm.getFieldValue(('memo'))
+            memo : memoDetail
+        }
+        let memoAlert = "";
+        if(memoDetail) {
+            memoAlert = "메모를 작성하였습니다."
+        } else {
+            memoAlert = "메모를 지웠습니다."
         }
         axios.post('http://localhost:3001/memo', body).then((res) => {
             if(!res.data.success) {
@@ -198,6 +201,8 @@ function Calendar() {
                 } else {
                     alert("예외처리");
                 }
+            } else {
+                alert(memoAlert);
             }
         })
     }
@@ -290,7 +295,16 @@ function Calendar() {
                 </div>
             </Modal>
 
-            <Modal forceRender title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
+            <Modal forceRender title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onCancel={onWriteCancel}
+                footer={[
+                    <Button key="back" onClick={onWriteCancel}>
+                    <UndoOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={onWriteOk}>
+                    <CheckOutlined/>작성
+                    </Button>
+                ]}
+            >
             <div className="Form">
                     <Form form={writeForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
@@ -372,7 +386,7 @@ function Calendar() {
             <Modal forceRender title="Memo" open={isMemoModalOpen} onCancel={onMemoCancel}
                 footer={[
                     <Button key="back" onClick={onMemoCancel}>
-                      <CloseOutlined/>취소
+                      <UndoOutlined/>취소
                     </Button>,
                     <Button key="submit" type="primary" onClick={onMemoOk}>
                       <CheckOutlined/>작성

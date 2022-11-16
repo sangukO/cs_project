@@ -31,8 +31,7 @@ function WriteNotice() {
     }
 
     axios.post('http://localhost:3001/getWriterName', body).then((res) => {
-      let name = res.data.writerName
-      setWriterName(name)
+      setWriterName(res.data.writerName)
     })
   }
 
@@ -40,25 +39,24 @@ function WriteNotice() {
   const onClickSubmit = () => {
 
     let body = {
-      name : writerName,
+      writer : writerName,
       date : moment().format('YYYY/MM/DD HH:mm'),
       title : writeForm.getFieldValue(('title')),
       content : editorRef.current?.getInstance().getHTML()
     }
-
-    // axios.post('http://localhost:3001/writeNotice', body).then((res) => {
-    //   if(!res.data.success) {
-    //       /** res 보고 예외처리 꼼꼼하게 */
-    //       if(res.data.err.message) {
-    //           alert(res.data.err.message);
-    //       } else {
-    //           alert("예외처리");
-    //       }
-    //   } else {
-    //       alert("작성이 완료되었습니다.");
-    //       navigate(`/Notice`);
-    //   }
-    // })
+    axios.post('http://localhost:3001/notice', body).then((res) => {
+      if(!res.data.success) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+          alert("작성이 완료되었습니다.");
+          navigate(`/Notice`);
+      }
+    })
   }
 
   useEffect(() => {

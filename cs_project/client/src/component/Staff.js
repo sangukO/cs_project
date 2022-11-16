@@ -21,6 +21,7 @@ function Staff() {
   const [dataError, setDataError] = useState([]);
   const [staffName, setStaffName] = useState("");
   const [isPieModalOpen, setisPieModalOpen] = useState(false);
+  const [mountCount, setMountCount] = useState(0);
 
   const showPieModal = (record) => {
     setStaffName(record.name);
@@ -37,6 +38,7 @@ function Staff() {
     setisPieModalOpen(false);
   };
   
+  /** 사용자 정보를 가져온다 */
   const getUserInfo = () => {
     axios.post('http://localhost:3001/getUserInfo').then((res) => {
       if(!res.status === 200) {
@@ -52,24 +54,45 @@ function Staff() {
     })
   }
 
-  const setPieData = (staffName) => {
-
-    initDataError(staffName);
-
-    axios.post('http://localhost:3001/getTodo').then((res) => {
-      if(!res.status === 200) {
-          /** res 보고 예외처리 꼼꼼하게 */
-          if(res.data.err.message) {
-              alert(res.data.err.message);
-          } else {
-              alert("예외처리");
-          }
-      } else {
-        setDataTodo(res.data.boardInfo);
-      }
+  /** 가져온 사용자 정보를 table 데이터로 저장 */
+  const getTableData = (staffData) => {
+    staffData.map((data, i) => {
+      let dataValueUser = {
+        "key":(i+1).toString(),
+        "_id":staffData[i]._id,
+        "id":staffData[i].userId,
+        "name":staffData[i].username,
+      }; 
+      setStaffData(staffData => [...staffData, dataValueUser]);
     })
   }
 
+    /** 차트에 들어갈 데이터 가져오기 */
+    const setPieData = (staffName) => {
+
+      initDataError(staffName);
+  
+      axios.post('http://localhost:3001/getTodo').then((res) => {
+        if(!res.status === 200) {
+            /** res 보고 예외처리 꼼꼼하게 */
+            if(res.data.err.message) {
+                alert(res.data.err.message);
+            } else {
+                alert("예외처리");
+            }
+        } else {
+          setDataTodo(res.data.boardInfo);
+        }
+      })
+    }
+  
+    /** 미완료 업무 리스트 초기화 */
+    const initDataError = (staffName) => {
+        let newDataError = dataError.filter((data) => data.name === staffName);	//filter 메소드 사용
+        setDataError(newDataError);
+    }
+
+  /** 파이 차트 렌더링 */
   const setPieChart = () => {
 
     let countSuccess = 0;
@@ -96,6 +119,16 @@ function Staff() {
       }
     })
 
+    if(countError === 0) {
+        let objectDataError = {
+            "key":1,
+            "date":"",
+            "todo":"없음 ",
+        };
+        setDataError(dataError => [...dataError, objectDataError])
+    }
+
+    /** 데이터 설정 */
     setPieDataState({
       labels: ['완료','진행중','미완료'],
       datasets: [
@@ -103,12 +136,12 @@ function Staff() {
           label: '# of Votes',
           data: [countSuccess, countWarning, countError],
           backgroundColor: [
-            'rgba(54, 162, 235, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
             'rgba(255, 206, 86, 0.2)',
             'rgba(255, 99, 132, 0.2)',
           ],
           borderColor: [
-            'rgba(54, 162, 235, 1)',
+            'rgba(75, 192, 192, 1)',
             'rgba(255, 206, 86, 1)',
             'rgba(255, 99, 132, 1)',
           ],
@@ -116,24 +149,6 @@ function Staff() {
         },
       ],
     });
-  }
-
-  /** 미완료 업무 리스트 초기화 */
-  const initDataError = (staffName) => {
-    const deletedDataError = dataError.filter((data) => data.name == staffName);	//filter 메소드 사용
-    setDataError(deletedDataError);
-  }
-
-  const getTableData = (staffData) => {
-    staffData.map((data, i) => {
-      let dataValueUser = {
-        "key":(i+1).toString(),
-        "_id":staffData[i]._id,
-        "id":staffData[i].userId,
-        "name":staffData[i].username,
-      };
-      setStaffData(staffData => [...staffData, dataValueUser]);
-    })
   }
 
   const columns = [
@@ -199,9 +214,10 @@ function Staff() {
               <div className="ErrorList" style={{textAlign:'center'}}>
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
                 <span><strong>미완료 업무</strong></span>
+                <br/>
                     {dataError.map((dataError, i) => (
-                            <li key={i} style={{color:'black'}}>{dataError.date+" "+dataError.todo}</li>
-                        ))}
+                        <li key={i} style={{color:'black'}}>{dataError.date+" "+dataError.todo}</li>
+                    ))}
                     </ul>
                 </div>
             </Modal>
