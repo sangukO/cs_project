@@ -1,11 +1,17 @@
 import Header from "../Header";
 import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
+import 'antd/dist/antd.min.css';
 import Nav from "../Nav";
 import  { Link } from 'react-router-dom'; 
 import moment from "moment";
 import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import {
+    CloseOutlined,
+    CheckOutlined,
+    UndoOutlined
+  } from '@ant-design/icons';
     
 function Calendar() {
 
@@ -14,13 +20,15 @@ function Calendar() {
     const [selectedValue, setSelectedValue] = useState(moment(moment()));
     const [isListModalOpen, setisListModalOpen] = useState(false);
     const [todoList, setTodoList] = useState([]);
-    const [_idOfTodo, set_idOfTodo] = useState("");
     const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
     const [writeValue, setWriteValue] = useState("진행중");
     const [todoData, setTodoData] = useState([]);
     const [mountCount, setMountCount] = useState(0);
     const [memoModalTitle, setMemoModalTitle] = useState("");
+    const [memoModalMemo, setMemoModalMemo] = useState("");
+    const [memo_id, setMemo_id] = useState("");
     const [isMemoModalOpen, setisMemoModalOpen] = useState(false);
+    const { TextArea } = Input;
 
     let dataArray = [];
     let Arr = [];
@@ -51,36 +59,39 @@ function Calendar() {
         dataArray.boardInfo.map((data, i) => {
             if(dataArray.boardInfo[i].tag === "완료") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "id":dataArray.boardInfo[i].id,
+                    "key":(i+1).toString(),
+                    "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
+                    "memo":dataArray.boardInfo[i].memo,
                     "tag":["success"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
             }
             if(dataArray.boardInfo[i].tag === "미완료") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "id":dataArray.boardInfo[i].id,
+                    "key":(i+1).toString(),
+                    "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
+                    "memo":dataArray.boardInfo[i].memo,
                     "tag":["error"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
             }
             if(dataArray.boardInfo[i].tag === "진행중") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "id":dataArray.boardInfo[i].id,
+                    "key":(i+1).toString(),
+                    "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
+                    "memo":dataArray.boardInfo[i].memo,
                     "tag":["warning"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
@@ -98,13 +109,14 @@ function Calendar() {
     /** 일정 데이터 중 selectedValue와 같은 날짜만 todoList에 저장 */
     const getTodoList = (dataArray, selectedValue) => {
         /** 선택한 날짜의 할일만 필터링한 객체 */
-        const TodoList = dataArray.filter(dataArray=>dataArray.date === selectedValue)
-            .map(dataArray => dataArray.todo);
+        const TodoList = dataArray.filter(dataArray=>dataArray.date === selectedValue);
         /** 일정 개수만큼 반복, 객체 형식으로 배열에 추가 */
         TodoList.map((data, i) => {
             let value = {
-                key: i,
-                todo: data
+                key: i+1,
+                _id: data._id,
+                todo: data.todo,
+                memo: data.memo
             }
             /** 일정 리스트 배열 추가 */
             Arr.push(value)
@@ -114,10 +126,6 @@ function Calendar() {
 
     const showListModal = () => {
         setisListModalOpen(true);
-    }
-
-    const onListOk = () => {
-        setisListModalOpen(false);
     }
 
     const onListCancel = () => {
@@ -134,7 +142,6 @@ function Calendar() {
     }
 
     const onWriteOk = () => {
-
         let body = {
           name : writeForm.getFieldValue(('name')),
           date : writeForm.getFieldValue(('date')),
@@ -164,43 +171,51 @@ function Calendar() {
         setisWriteModalOpen(false);
     }
 
-    /** 일정 리스트 중 하나 클릭 */
+    /** 일정 리스트 중 하나 클릭하여 메모 모달 출력 */
     const enterMemoModal = (todoList) => {
-        // 구현 중, memoModal 출력
         setMemoModalTitle(todoList.todoList.todo);
-        console.log(memoModalTitle);
+        setMemo_id(todoList.todoList._id);
+        setMemoModalMemo(todoList.todoList.memo);
+        setisListModalOpen(false);
         setisMemoModalOpen(true);
+        
     }
 
     const onMemoOk = () => {
-        setisMemoModalOpen(false);
-
-        // 메모 내용
-        // let body = {
-        //     memo : writeForm.getFieldValue(('memo')),
-        // }
-
-
-        // axios.post('http://localhost:3001/memo', body).then((res) => {
-        //   if(!res.data.success) {
-        //       /** res 보고 예외처리 꼼꼼하게 */
-        //       if(res.data.err.message) {
-        //           alert("에러 : " + res.data.err.message);
-        //       } else {
-        //           alert("예외처리");
-        //       }
-        //   }
-        //   else {
-        //     setTodoData([]);
-        //     dataArray = [];
-        //     getTodo();
-        //   }
-        //})
-        // setisWriteModalOpen(false);
+        let memoDetail = memoForm.getFieldValue(('memo'))
+        let body = {
+            _id : memo_id,
+            memo : memoDetail
+        }
+        let memoAlert = "";
+        if(memoDetail) {
+            memoAlert = "메모를 작성하였습니다."
+        } else {
+            memoAlert = "메모를 지웠습니다."
+        }
+        axios.post('http://localhost:3001/memo', body).then((res) => {
+            if(!res.data.success) {
+                /** res 보고 예외처리 꼼꼼하게 */
+                if(res.data.err.message) {
+                    alert("에러 : " + res.data.err.message);
+                } else {
+                    alert("예외처리");
+                }
+            } else {
+                alert(memoAlert);
+                setisMemoModalOpen(false);
+                setisListModalOpen(false);
+            }
+        })
     }
 
     const onMemoCancel = () => {
         setisMemoModalOpen(false);
+        setisListModalOpen(true);
+        setTodoData([]);
+        dataArray = [];
+        getTodo();
+        getTodoList(todoData, selectedValue);
     }
 
     useEffect(() => {
@@ -234,6 +249,12 @@ function Calendar() {
         }
     },[todoList])
 
+    useEffect(() => {
+        memoForm.setFieldsValue({
+            memo:memoModalMemo
+        });
+    },[memoModalMemo])
+
     return (
         <div>
             <div className="Header"><Header/></div>
@@ -260,17 +281,32 @@ function Calendar() {
                 </div>
             </div>
 
-            <Modal title={selectedValue} open={isListModalOpen} onOk={onListOk} onCancel={onListCancel}>
+            <Modal title={selectedValue} open={isListModalOpen} onCancel={onListCancel}
+                footer={[
+                    <Button key="back" onClick={onListCancel}>
+                        <UndoOutlined />취소
+                    </Button>,
+                    ]}
+            >
                 <div className="TodoList">
                 <ul style={{listStyle: "none", paddingTop:"10px", paddingLeft:"0px"}}> 
                     {todoList.map((todoList, i) => (
-                            <li key={i} ><Button type="link" key={i} onClick={() => enterMemoModal({todoList})} style={{color:'black'}}>{todoList.todo}</Button></li>
-                        ))}
+                        <li key={i} ><Button type="link" key={i} onClick={() => enterMemoModal({todoList})} style={{color:'black'}}>{todoList.todo}</Button></li>
+                    ))}
                     </ul>
                 </div>
             </Modal>
 
-            <Modal forceRender title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
+            <Modal forceRender title={selectedValue + " 할 일 작성"} open={isWriteModalOpen} onCancel={onWriteCancel}
+                footer={[
+                    <Button key="back" onClick={onWriteCancel}>
+                    <UndoOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={onWriteOk}>
+                    <CheckOutlined/>작성
+                    </Button>
+                ]}
+            >
             <div className="Form">
                     <Form form={writeForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
@@ -349,11 +385,20 @@ function Calendar() {
                 </div>
             </Modal>
 
-            <Modal title="Memo" open={isMemoModalOpen} onOk={onMemoOk} onCancel={onMemoCancel}>
+            <Modal forceRender title="Memo" open={isMemoModalOpen} onCancel={onMemoCancel}
+                footer={[
+                    <Button key="back" onClick={onMemoCancel}>
+                      <UndoOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={onMemoOk}>
+                      <CheckOutlined/>작성
+                    </Button>
+                  ]}
+            >
                 <div className="TodoMemo">
                     <div><p>{memoModalTitle}</p><hr/></div>
                     <div className="Form">
-                    <Form form={memoForm} style={{margin:'auto'}}
+                    <Form form={memoForm} style={{marginTop:'5%'}}
                         name="basic"
                         initialValues={{
                             remember: true,
@@ -363,13 +408,8 @@ function Calendar() {
                         <Form.Item
                             label=""
                             name="memo"
-                            rules={[
-                            {
-                                message: 'Please input your memo!',
-                            },
-                            ]}
                         >
-                            <Input />
+                            <TextArea autoSize={{ minRows: 4, maxRows: 8}} />
                         </Form.Item>
                     </Form>
                 </div>

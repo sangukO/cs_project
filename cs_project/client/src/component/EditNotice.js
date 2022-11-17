@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import Header from "./Header";
 import Nav from "./Nav";
-import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
+import { Breadcrumb, Button, Input, Form } from 'antd';
 import {
   CloseOutlined,
   CheckOutlined,
@@ -18,33 +18,62 @@ import 'moment/locale/ko';
 
 function WriteNotice() {
 
+  const params = useParams();
   const editorRef = useRef();
-  const [writeForm] = Form.useForm();
+  const [editForm] = Form.useForm();
   const navigate = useNavigate();
-  const [writerName, setWriterName] = useState("");
-  const userId = useSelector( (state) => state );
+  const [noticeDetail, setNoticeDetail] = useState([]);
+  const [editContent, setEditContent] = useState("");
+  const [mountCount, setMountCount] = useState(0);
+  let content = ""
+  let noticeDetailArry = [];
+  const [loading, setLoading] = useState(true);
 
-  /** 작성 중인 id의 작성자 이름 가져오기 */
-  const getWriterNameData = () => {
+  /** 공지 상세 데이터 불러오기 */
+  const getNoticeDetail = () => {
     let body = {
-      userId : userId,
+      _id: params._id
     }
 
-    axios.post('http://localhost:3001/getWriterName', body).then((res) => {
-      setWriterName(res.data.writerName)
+    axios.post('http://localhost:3001/getNoticeDetail', body).then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        noticeDetailArry = res.data.noticeDetail;
+        getNoticeDetailData(noticeDetailArry);
+      }
     })
+  }
+
+  const getNoticeDetailData = (noticeDetailArry) => {
+    let Notice = {
+      "_id": noticeDetailArry._id,
+      "title": noticeDetailArry.title,
+      "writer": noticeDetailArry.writer,
+      "date":noticeDetailArry.date,
+      "content":noticeDetailArry.content
+    }
+    setNoticeDetail(Notice);
+    setLoading(false);
   }
 
   /** 글 작성 버튼 클릭 */
   const onClickSubmit = () => {
 
     let body = {
-      writer : writerName,
-      date : moment().format('YYYY/MM/DD HH:mm'),
-      title : writeForm.getFieldValue(('title')),
-      content : editorRef.current?.getInstance().getHTML()
+      _id: params._id,
+      writer: noticeDetail.writer,
+      date: moment().format('YYYY/MM/DD HH:mm'),
+      title: editForm.getFieldValue(('title')),
+      content: editorRef.current?.getInstance().getHTML()
     }
-    axios.post('http://localhost:3001/notice', body).then((res) => {
+  
+    axios.post('http://localhost:3001/noticeUpdate', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -53,17 +82,34 @@ function WriteNotice() {
               alert("예외처리");
           }
       } else {
-          alert("작성이 완료되었습니다.");
-          navigate(`/Notice`);
+          alert("수정이 완료되었습니다.");
+          navigate(`/DetailNotice/${params._id}`);
       }
     })
   }
 
   useEffect(() => {
+    getNoticeDetail()
     // 글 제목 input에 autofocus
     document.getElementById("focus").focus()
-    getWriterNameData()
   }, []);
+
+  useEffect(() => {
+    editForm.setFieldsValue({
+      title : noticeDetail.title,
+    })
+    // editor에 내용 추가
+    setEditContent(noticeDetail.content)
+  }, [noticeDetail])
+
+  useEffect(() => {
+    // 첫 번째와 두 번째 렌더링은 에디터에 내용 추가 x
+    if(mountCount != 2) {
+      setMountCount(mountCount+1);
+    } else if(mountCount == 2) {
+      editorRef.current?.getInstance().setHTML(editContent);
+    }
+  }, [editContent])
 
   return (
         <div>
@@ -78,14 +124,15 @@ function WriteNotice() {
                   >
                     <Breadcrumb.Item><Link to={"/"}>Home</Link></Breadcrumb.Item>
                     <Breadcrumb.Item><Link to={"/Notice"}>Notice</Link></Breadcrumb.Item>
-                    <Breadcrumb.Item>Write</Breadcrumb.Item>
+                    <Breadcrumb.Item><Link to={`/DetailNotice/${params._id}`}>{params._id}</Link></Breadcrumb.Item>
+                    <Breadcrumb.Item>Edit</Breadcrumb.Item>
                   </Breadcrumb>
               </div>
               <div className="Margin" style={{height:"50px"}}></div>
-              <div className="Title" style={{textAlign:'center', height:'63px'}}><h1>공지 작성</h1></div>
+              <div className="Title" style={{textAlign:'center', height:'63px'}}><h1>공지 수정</h1></div>
               <div className="Margin" style={{height:"50px"}}></div>
               <div className="Form">
-                    <Form form={writeForm} style={{width:'80%', margin:'auto'}}
+                    <Form form={editForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
                         labelCol={{
                             span: 5,
@@ -121,9 +168,9 @@ function WriteNotice() {
                         >
                           <Editor
                             ref={editorRef} // DOM 선택용 useRef
-                            placeholder="내용을 입력해주세요."
                             previewStyle="vertical" // 미리보기 스타일 지정
                             height="300px" // 에디터 창 높이
+                            initialValue={content}
                             initialEditType="wysiwyg" // 초기 입력모드 설정(디폴트 markdown)
                             autofocus={false} // focus 해제
                             hideModeSwitch={true} // 하단 타입 선택 탭 숨기기

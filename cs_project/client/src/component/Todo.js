@@ -5,11 +5,14 @@ import Nav from "./Nav";
 import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
 import 'antd/dist/antd.min.css';
 import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SyncOutlined,
-  EditOutlined,
-  DeleteOutlined
+    UndoOutlined,
+    CheckOutlined,
+    CheckCircleOutlined,
+    CloseCircleOutlined,
+    SyncOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    FormOutlined
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
 import axios from 'axios';
@@ -55,7 +58,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -122,7 +125,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -149,7 +152,7 @@ function Todo() {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
-              console.log(res.data.err.message);
+              alert(res.data.err.message);
           } else {
               alert("예외처리");
           }
@@ -167,48 +170,48 @@ function Todo() {
   
   const getTodo = () => {
     axios.post('http://localhost:3001/getTodo').then((res) => {
-      dataArry = res.data;
+      dataArry = res.data.boardInfo;
       getTableData(dataArry);
     })
   }
 
   const getTableData = (dataArry) => {
-    dataArry.boardInfo.map((data, i) => {
-            if(dataArry.boardInfo[i].tag === "완료") {
+    dataArry.map((data, i) => {
+            if(dataArry[i].tag === "완료") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
-                    "name":dataArry.boardInfo[i].name,
-                    "date":dataArry.boardInfo[i].date,
-                    "time": dataArry.boardInfo[i].time,
-                    "todo":dataArry.boardInfo[i].todo,
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
+                    "_id":dataArry[i]._id,
+                    "name":dataArry[i].name,
+                    "date":dataArry[i].date,
+                    "time": dataArry[i].time,
+                    "todo":dataArry[i].todo,
                     "tag":["success"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
             }
-            if(dataArry.boardInfo[i].tag === "미완료") {
+            if(dataArry[i].tag === "미완료") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
-                    "name":dataArry.boardInfo[i].name,
-                    "date":dataArry.boardInfo[i].date,
-                    "time": dataArry.boardInfo[i].time,
-                    "todo":dataArry.boardInfo[i].todo,
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
+                    "_id":dataArry[i]._id,
+                    "name":dataArry[i].name,
+                    "date":dataArry[i].date,
+                    "time": dataArry[i].time,
+                    "todo":dataArry[i].todo,
                     "tag":["error"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
             }
-            if(dataArry.boardInfo[i].tag === "진행중") {
+            if(dataArry[i].tag === "진행중") {
                 let dataValue = {
-                    "key":i.toString(),
-                    "_id":dataArry.boardInfo[i]._id,
-                    "id":dataArry.boardInfo[i].id,
-                    "name":dataArry.boardInfo[i].name,
-                    "date":dataArry.boardInfo[i].date,
-                    "time": dataArry.boardInfo[i].time,
-                    "todo":dataArry.boardInfo[i].todo,
+                    "key":(i+1).toString(),
+                    "id":(i+1).toString(),
+                    "_id":dataArry[i]._id,
+                    "name":dataArry[i].name,
+                    "date":dataArry[i].date,
+                    "time": dataArry[i].time,
+                    "todo":dataArry[i].todo,
                     "tag":["warning"]
                 };
                 setTodoData(todoData => [...todoData, dataValue]);
@@ -218,6 +221,13 @@ function Todo() {
 
   const columns = [
     {
+      title: '번호',
+      dataIndex: 'key',
+      key: 'key',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.key - b.key
+    },
+    {
       title: '이름',
       dataIndex: 'name',
       key: 'name',
@@ -226,8 +236,6 @@ function Todo() {
       title: '날짜',
       dataIndex: 'date',
       key: 'date',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: '시간',
@@ -307,10 +315,19 @@ function Todo() {
               </div>
               <div className="Margin" style={{height:"50px"}}></div>
               <div className="Title" style={{textAlign:'center'}}><h1>할 일 목록</h1></div>
-              <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}>작성</Button></div>
+              <div style={{float:"right", margin:'0 5px 20px 0'}}><Button type="primary" onClick={showWriteModal}><FormOutlined />작성</Button></div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={todoData}/>
             </div>
-            <Modal forceRender title="할 일 작성" open={isWriteModalOpen} onOk={onWriteOk} onCancel={onWriteCancel}>
+            <Modal forceRender title="할 일 작성" open={isWriteModalOpen} onCancel={onWriteCancel}
+                footer={[
+                    <Button key="back" onClick={onWriteCancel}>
+                    <UndoOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={onWriteOk}>
+                    <CheckOutlined/>작성
+                    </Button>
+                ]}
+            >
             <div className="Form">
                     <Form form={writeForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
@@ -387,7 +404,16 @@ function Todo() {
                     </Form>
                 </div>
             </Modal>
-            <Modal forceRender title="할 일 수정" open={isEditModalOpen} onOk={onEditOk} onCancel={onEditCancel}>
+            <Modal forceRender title="할 일 수정" open={isEditModalOpen} onCancel={onEditCancel}
+                footer={[
+                    <Button key="back" onClick={onEditCancel}>
+                    <UndoOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={onEditOk}>
+                    <CheckOutlined/>수정
+                    </Button>
+                ]}
+            >
             <div className="Form">
                     <Form form={editForm} style={{width:'80%', margin:'auto'}}
                         name="basic"
@@ -463,7 +489,16 @@ function Todo() {
                     </Form>
                 </div>
             </Modal>
-            <Modal title="삭제하시겠습니까?" open={isDeleteModalOpen} onOk={onDeleteOk} onCancel={onDeleteCancel}>
+            <Modal title="삭제하시겠습니까?" open={isDeleteModalOpen} onCancel={onDeleteCancel}
+                footer={[
+                    <Button key="back" onClick={onDeleteCancel}>
+                    <UndoOutlined/>취소
+                    </Button>,
+                    <Button key="submit" type="primary" danger onClick={onDeleteOk}>
+                    <CheckOutlined/>삭제
+                    </Button>
+                ]}
+            >
               <div>
                 <p>내용은 복구되지 않습니다.</p>
               </div>

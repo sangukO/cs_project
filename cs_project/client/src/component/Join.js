@@ -48,7 +48,7 @@ function Join() {
                 if(!res.data.sucess) {
                     /** res 보고 예외처리 꼼꼼하게 */
                     if(res.data.err.message) {
-                        console.log(res.data.err.message);
+                        alert(res.data.err.message);
                     } else {
                         alert("예외처리");
                     }
