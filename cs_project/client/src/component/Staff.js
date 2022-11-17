@@ -21,7 +21,6 @@ function Staff() {
   const [dataError, setDataError] = useState([]);
   const [staffName, setStaffName] = useState("");
   const [isPieModalOpen, setisPieModalOpen] = useState(false);
-  const [mountCount, setMountCount] = useState(0);
 
   const showPieModal = (record) => {
     setStaffName(record.name);
@@ -34,7 +33,6 @@ function Staff() {
   };
 
   const onPieCancel = () => {
-    
     setisPieModalOpen(false);
   };
   
@@ -59,7 +57,6 @@ function Staff() {
     staffData.map((data, i) => {
       let dataValueUser = {
         "key":(i+1).toString(),
-        "_id":staffData[i]._id,
         "id":staffData[i].userId,
         "name":staffData[i].username,
       }; 
@@ -136,12 +133,12 @@ function Staff() {
           label: '# of Votes',
           data: [countSuccess, countWarning, countError],
           backgroundColor: [
-            'rgba(75, 192, 192, 0.2)',
+            'rgba(120, 235, 120, 0.2)',
             'rgba(255, 206, 86, 0.2)',
             'rgba(255, 99, 132, 0.2)',
           ],
           borderColor: [
-            'rgba(75, 192, 192, 1)',
+            'rgba(120, 235, 120, 1)',
             'rgba(255, 206, 86, 1)',
             'rgba(255, 99, 132, 1)',
           ],
@@ -152,11 +149,6 @@ function Staff() {
   }
 
   const columns = [
-    {
-      title: '_id',
-      dataIndex: '_id',
-      key: '_id',
-    },
     {
       title: '이름',
       dataIndex: 'name',
