@@ -40,11 +40,8 @@ function Staff() {
   const getUserInfo = () => {
     axios.post('http://localhost:3001/getUserInfo').then((res) => {
       if(!res.status === 200) {
-          /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
               alert(res.data.err.message);
-          } else {
-              alert("예외처리");
           }
       } else {
         getTableData(res.data.userInfo);
@@ -71,11 +68,8 @@ function Staff() {
   
       axios.post('http://localhost:3001/getTodo').then((res) => {
         if(!res.status === 200) {
-            /** res 보고 예외처리 꼼꼼하게 */
             if(res.data.err.message) {
                 alert(res.data.err.message);
-            } else {
-                alert("예외처리");
             }
         } else {
           setDataTodo(res.data.boardInfo);
@@ -125,7 +119,7 @@ function Staff() {
         setDataError(dataError => [...dataError, objectDataError])
     }
 
-    /** 데이터 설정 */
+    /** 차트 데이터 설정 */
     setPieDataState({
       labels: ['완료','진행중','미완료'],
       datasets: [
