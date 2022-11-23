@@ -17,7 +17,7 @@ function Join() {
         };
     
     const validateMessages = {
-        // 경고 문구 무시 주석
+        // 문법 경고 문구 무시 주석
         // eslint-disable-next-line
         required: '${label} is required!',
         types: {
@@ -96,6 +96,7 @@ function Join() {
                         <Form.Item
                             name={['user', 'password']}
                             label="비밀번호"
+                            hasFeedback
                             rules={[
                             {
                                 type: 'password',
@@ -108,11 +109,22 @@ function Join() {
                         <Form.Item
                             name={['user', 'passwordCk']}
                             label="비밀번호 확인"
+                            dependencies={['password']}
+                            hasFeedback
                             rules={[
                             {
                                 type: 'password',
                                 required: true,
+                                message: 'Please confirm your password!',
                             },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                  if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                  }
+                                  return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                },
+                              }),
                             ]}
                         >
                             <Input.Password />
@@ -136,6 +148,7 @@ function Join() {
                                 type: 'number',
                                 min: 0,
                                 max: 99,
+                                required: true,
                             },
                             ]}
                         >
