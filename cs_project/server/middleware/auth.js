@@ -5,7 +5,7 @@ let auth = (req, res, next) => {
   let token = req.cookies.x_auth;
   
   console.log('auth처리')
-  console.log(req.cookies.x_auth)
+  console.log(token)
 
   //2. 토큰을 복호화한 후 비교
   User.findByToken(token, (err, user) => {
@@ -19,7 +19,7 @@ let auth = (req, res, next) => {
   //3. 2조건 만족시 Okay
 
   //4. 2조건 불만족시 NO
-  
+
 };
 
 module.exports = { auth };
