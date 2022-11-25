@@ -80,14 +80,14 @@ app.post('/login', (req, res) => {
             _id: user._id,
             userId: user.userId
           });
-        // console.log(user.token)
+        //console.log(res.cookie.x_auth)
         // console.log(user._id)
       });
     });
   });
 })
 
-// 로그인 유저 정보 post로 바꿔보기
+// auth
 app.get('/auth', auth, (req, res) => {
   // 여기까지 미들웨어(auth.js)를 통과해 왔다는 얘기는 Authentication이 True라는 말
   // 클라이언트에게 유저 정보 전달
@@ -98,7 +98,7 @@ app.get('/auth', auth, (req, res) => {
     userId: req.user.userId,
     username: req.user.username,
     age: req.user.age,
-    gender: req.user.gender
+    gender: req.user.gender,
     email: req.user.email,
     phone: req.user.phone
   })
@@ -114,7 +114,7 @@ app.post('/logout', (req, res) => {
 })
 
 // 게시판 작성
-app.post('/board', (req, res) => {
+app.post('/board', auth, (req, res) => {
   const board = new Board(req.body)
   board.save((err, boardInfo) => {
     if (err) return res.json({ success: false, err })

@@ -19,6 +19,7 @@ let auth = (req, res, next) => {
   //3. 2조건 만족시 Okay
 
   //4. 2조건 불만족시 NO
+  
 };
 
 module.exports = { auth };
