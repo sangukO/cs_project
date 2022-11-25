@@ -15,10 +15,10 @@ function Login() {
             userId : values.userId,
             password : values.password
         }
-        axios.post('/api/login', body, {withCredentials:true})
-        .then((response) => {
-            if (response.data.loginSuccess) {
-                dispatch({type:'getId', userId: response.data.userId});
+        axios.post('/api/login', body)
+        .then((res) => {
+            if (res.data.loginSuccess) {
+                dispatch({type:'getId', userId: res.data.userId});
                 navigate('/');
             }
             else {

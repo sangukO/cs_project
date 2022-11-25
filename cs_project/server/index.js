@@ -7,6 +7,9 @@ const port = 3001;
 
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
+
+const config = require('./config/key')
+
 const { User } = require("./models/User")
 const { auth } = require("./middleware/auth")
 const { Board } = require("./models/Board")
@@ -19,7 +22,7 @@ app.use(cookieParser());
 
 //몽고디비 연결
 const mongoose = require('mongoose')
-mongoose.connect("mongodb+srv://root:complicatedpassword@csproject.vjvtipf.mongodb.net/cs_project", {
+mongoose.connect(config.mongoURI, {
   // useNewUrlParser: true, 
   // useUnifiedTopology: true, 
   // useCreateIndex: true, 
@@ -73,13 +76,12 @@ app.post('/api/login', (req, res) => {
         // x-auth-token : 엔드 포인트에서 인증 토큰 요청해서 
         // 성공시 서버에 인증 토큰을 반환해 줌
         // 그 토큰을 쿠키에 저장
-        console.log(user.token)
+        console.log(user)
         res.cookie('x_auth', user.token)
           .status(200)
           .json({
             loginSuccess: true,
-            _id: user._id,
-            userId: user.userId
+            userInfo: user
           });
         //console.log(res.cookie.x_auth)
         // console.log(user._id)
