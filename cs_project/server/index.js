@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors') //cors 오류 해결
-app.use(cors()) //cors 오류 해결
+app.use(cors({ origin: 'http://localhost:3000', credentials: true })) //cors 오류 해결
 
 const port = 3001;
 
@@ -73,7 +73,8 @@ app.post('/login', (req, res) => {
         // x-auth-token : 엔드 포인트에서 인증 토큰 요청해서 
         // 성공시 서버에 인증 토큰을 반환해 줌
         // 그 토큰을 쿠키에 저장
-        res.cookie("x_auth", user.token)
+        console.log(user.token)
+        res.cookie('x_auth', user.token)
           .status(200)
           .json({
             loginSuccess: true,
@@ -197,6 +198,8 @@ app.post('/getUserInfo', (req, res) => {
 // 공지 게시판 작성
 app.post('/notice', (req, res) => {
   const notice = new Notice(req.body)
+  console.log(req.body)
+  console.log(notice)
   notice.save((err, noticeInfo) => {
     if (!notice) return res.status(404).json({ message: '오류' });
     return res.status(200).json({ success: true })

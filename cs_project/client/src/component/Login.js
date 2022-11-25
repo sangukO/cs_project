@@ -15,7 +15,7 @@ function Login() {
             userId : values.userId,
             password : values.password
         }
-        axios.post('http://localhost:3001/login', body)
+        axios.post('http://localhost:3001/login', body, {withCredentials:true})
         .then((response) => {
             if (response.data.loginSuccess) {
                 dispatch({type:'getId', userId: response.data.userId});

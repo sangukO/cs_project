@@ -1,11 +1,13 @@
 import 'antd/dist/antd.min.css';
-import {  Breadcrumb, Button, Form, Input, InputNumber, Radio } from 'antd';
+import {  Breadcrumb, Button, Form, Input, InputNumber, Select } from 'antd';
 import  { Link, useNavigate } from 'react-router-dom'; 
+import { useState } from "react";
 import Header from "./Header";
 import Nav from "./Nav";
 import axios from 'axios';
 
 function Join() {
+    const Option = Select.Option;
     const navigate = useNavigate();
     const layout = {
         labelCol: {
@@ -15,20 +17,19 @@ function Join() {
             span: 12,
         },
         };
-    
+    const gradeData = ['직원', '점주', '점장'];
+    const weekData = ['평일', '주말'];
+    const timeData = ['오전', '점심', '저녁', '야간'];
+
     const validateMessages = {
         // 문법 경고 문구 무시 주석
         // eslint-disable-next-line
-        required: '${label} is required!',
+        required: '빈 칸을 채워주세요!',
         types: {
             // eslint-disable-next-line
-            email: '${label} is not a valid email!',
+            email: '유효한 이메일 형식이 아닙니다!',
             // eslint-disable-next-line
-            number: '${label} is not a valid number!',
-        },
-        number: {
-            // eslint-disable-next-line
-            range: '${label} must be between ${min} and ${max}',
+            number: '유효한 나이가 아닙니다!',
         },
     };
 
@@ -85,10 +86,35 @@ function Join() {
                         <Form.Item
                             name={['user', 'userId']}
                             label="아이디"
+                            tooltip="알파벳, 숫자 조합만 사용 가능합니다."
+                            hasFeedback
                             rules={[
                             {
                                 required: true,
                             },
+                            () => ({
+                                // 유효성 검사 - 숫자, 알파벳만 가능
+                                validator(_, value) {
+                                  var pattern_num = /[0-9]/;  // 숫자 
+
+                                  var pattern_eng = /[a-zA-Z]/;  // 알파벳
+                        
+                                  var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/;  // 특수문자
+                        
+                                  var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;  // 한글 체크
+                                  if ( (pattern_num.test(value)) || (pattern_eng.test(value)) ) {
+                                    if(!(pattern_spc.test(value)) && !(pattern_kor.test(value)) ) {
+                                      return Promise.resolve();
+                                    } else{
+                                      return Promise.reject(new Error('아이디 형식을 확인해주세요!'));
+                                    }
+                                  }
+                                  else if (!value) {
+                                    return Promise.reject();
+                                  }
+                                    return Promise.reject(new Error('아이디 형식을 확인해주세요!'));
+                                  }
+                                }),
                             ]}
                         >
                             <Input />
@@ -102,6 +128,15 @@ function Join() {
                                 type: 'password',
                                 required: true,
                             },
+                            () => ({
+                                // 빈 값 검사
+                                validator(_, value) {
+                                  if (!value) {
+                                    return Promise.reject(new Error('빈 칸을 채워주세요!'));
+                                  }
+                                  return Promise.resolve();
+                                },
+                              }),
                             ]}
                         >
                             <Input.Password />
@@ -119,10 +154,13 @@ function Join() {
                             },
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
-                                  if (!value || getFieldValue('password') === value) {
+                                  if (!value) {
+                                    return Promise.reject(new Error('빈 칸을 채워주세요!'));
+                                  }
+                                  if (value && getFieldValue(['user', 'password']) && getFieldValue(['user', 'password']) === value) {
                                     return Promise.resolve();
                                   }
-                                  return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                  return Promise.reject(new Error('비밀번호를 확인해주세요!'));
                                 },
                               }),
                             ]}
@@ -132,13 +170,37 @@ function Join() {
                         <Form.Item
                             name={['user', 'name']}
                             label="이름"
+                            tooltip="한글 및 영어만 입력할 수 있습니다."
                             rules={[
                             {
                                 required: true,
                             },
+                            () => ({
+                                // 유효성 검사 - 한글, 알파벳만 가능
+                                validator(_, value) {
+                                  var pattern_num = /[0-9]/;  // 숫자 
+
+                                  var pattern_eng = /[a-zA-Z]/;  // 알파벳
+                        
+                                  var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/;  // 특수문자
+                        
+                                  var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;  // 한글 체크
+                                  if ( (pattern_kor.test(value)) || (pattern_eng.test(value)) ) {
+                                    if(!(pattern_spc.test(value)) && !(pattern_num.test(value)) ) {
+                                      return Promise.resolve();
+                                    } else{
+                                      return Promise.reject(new Error('이름을 확인해주세요!'));
+                                    }
+                                  }
+                                  else if (!value) {
+                                    return Promise.reject();
+                                  }
+                                    return Promise.reject(new Error('이름을 확인해주세요!'));
+                                  }
+                                }),
                             ]}
                         >
-                            <Input />
+                            <Input placeholder='실명을 작성해주세요'/>
                         </Form.Item>
                         <Form.Item
                             name={['user', 'age']}
@@ -146,22 +208,70 @@ function Join() {
                             rules={[
                             {
                                 type: 'number',
-                                min: 0,
-                                max: 99,
                                 required: true,
                             },
                             ]}
                         >
-                            <InputNumber />
+                            <InputNumber min={17} max={99}/>
+                        </Form.Item>
+                        <Form.Item
+                            name={['user', 'phone']}
+                            label="전화번호"
+                            rules={[
+                            {
+                                required: true,
+                            },
+                            ({ setFieldValue }) => ({
+                                // 유효성 검사 - 숫자만 가능
+                                validator(_, value) {
+                                  var pattern_num = /[0-9]/;  // 숫자 
+                                  setFieldValue( ['user', 'phone'], value.replace(/[^0-9]/g, '') ) // 정규식으로 제어
+                                  if ( (pattern_num.test(value))) {
+                                      return Promise.resolve();
+                                  } else {
+                                      return Promise.reject();
+                                  }
+                                },
+                            }),
+                            ]}
+                        >
+                            <Input type="text" placeholder='- 를 제외한 숫자만 입력'/>
+                        </Form.Item>
+                        <Form.Item
+                            name={['user', 'grade']}
+                            label="파트"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Select
+                                allowClear
+                                options={gradeData.map((grade) => ({ label: grade, value: grade }))}
+                            >
+                            </Select>
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
+                            <Select
+                                allowClear
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name={['user', 'gender']}
                             label="성별"
                         >
-                            <Radio.Group>
-                                <Radio value="0"> 남 </Radio>
-                                <Radio value="1"> 여 </Radio>
-                            </Radio.Group>
+                            <Select
+                                allowClear
+                            >
+                                <Option value="0">남자</Option>
+                                <Option value="1">여자</Option>
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name={['user', 'email']}
@@ -172,9 +282,6 @@ function Join() {
                             },
                             ]}
                         >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name={['user', 'phone']} label="전화번호">
                             <Input />
                         </Form.Item>
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 10 }}>

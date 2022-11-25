@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema( {    // 스키마 세팅
   },
   gender: {                 // 0 = 남, 1 = 여
     type: Number, 
-    default: 0
+    default: 2
   },
   email: {
     type: String,
