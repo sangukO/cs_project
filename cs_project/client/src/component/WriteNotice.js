@@ -30,7 +30,7 @@ function WriteNotice() {
       userId : userId,
     }
 
-    axios.post('http://localhost:3001/getWriterName', body).then((res) => {
+    axios.post('/api/getWriterName', body).then((res) => {
       setWriterName(res.data.writerName)
     })
   }
@@ -47,7 +47,7 @@ function WriteNotice() {
 
     console.log(body);
 
-    axios.post('http://localhost:3001/notice', body).then((res) => {
+    axios.post('/api/notice', body).then((res) => {
       console.log(res);
       // if(!res.data.success) {
       //     /** res 보고 예외처리 꼼꼼하게 */

@@ -34,7 +34,7 @@ function Calendar() {
     let Arr = [];
 
     const getTodo = () => {
-        axios.post('http://localhost:3001/getTodo').then((res) => {
+        axios.post('/api/getTodo').then((res) => {
             dataArray = res.data;
             getTableData(dataArray);
         })
@@ -150,7 +150,7 @@ function Calendar() {
           tag : writeForm.getFieldValue(('tag'))
       }
         // 게시판 작성 요청
-        axios.post('http://localhost:3001/board', body).then((res) => {
+        axios.post('/api/board', body).then((res) => {
           if(!res.data.success) {
               /** res 보고 예외처리 꼼꼼하게 */
               if(res.data.err.message) {
@@ -193,7 +193,7 @@ function Calendar() {
         } else {
             memoAlert = "메모를 지웠습니다."
         }
-        axios.post('http://localhost:3001/memo', body).then((res) => {
+        axios.post('/api/memo', body).then((res) => {
             if(!res.data.success) {
                 /** res 보고 예외처리 꼼꼼하게 */
                 if(res.data.err.message) {

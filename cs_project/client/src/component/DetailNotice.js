@@ -33,7 +33,7 @@ function Detail() {
       _id: params._id
     }
 
-    axios.post('http://localhost:3001/getNoticeDetail', body).then((res) => {
+    axios.post('/api/getNoticeDetail', body).then((res) => {
       if(!res.status === 200) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -72,7 +72,7 @@ function Detail() {
     let body = {
       _id: params._id
     }
-    axios.post('http://localhost:3001/noticeDelete', body).then((res) => {
+    axios.post('/api/noticeDelete', body).then((res) => {
       if(!res.status === 200) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {

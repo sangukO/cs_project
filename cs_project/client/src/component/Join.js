@@ -45,7 +45,7 @@ function Join() {
             phone : values.user.phone
         }
 
-        axios.post('http://localhost:3001/register', body).then((res) => {
+        axios.post('/api/register', body).then((res) => {
                 if(!res.data.sucess) {
                     /** res 보고 예외처리 꼼꼼하게 */
                     if(res.data.err.message) {

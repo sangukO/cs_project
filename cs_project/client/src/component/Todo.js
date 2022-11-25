@@ -54,7 +54,7 @@ function Todo() {
       tag : writeForm.getFieldValue(('tag'))
     }
   
-    axios.post('http://localhost:3001/board', body).then((res) => {
+    axios.post('/api/board', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -121,7 +121,7 @@ function Todo() {
       tag : editForm.getFieldValue(('tag'))
     }
 
-    axios.post('http://localhost:3001/update', body).then((res) => {
+    axios.post('/api/update', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -148,7 +148,7 @@ function Todo() {
     let body = {
       _id : _idOfTodo
     }
-    axios.post('http://localhost:3001/delete', body).then((res) => {
+    axios.post('/api/delete', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -169,7 +169,7 @@ function Todo() {
   };
   
   const getTodo = () => {
-    axios.post('http://localhost:3001/getTodo').then((res) => {
+    axios.post('/api/getTodo').then((res) => {
       dataArry = res.data.boardInfo;
       getTableData(dataArry);
     })

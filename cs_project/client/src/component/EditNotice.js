@@ -35,7 +35,7 @@ function WriteNotice() {
       _id: params._id
     }
 
-    axios.post('http://localhost:3001/getNoticeDetail', body).then((res) => {
+    axios.post('/api/getNoticeDetail', body).then((res) => {
       if(!res.status === 200) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
@@ -73,7 +73,7 @@ function WriteNotice() {
       content: editorRef.current?.getInstance().getHTML()
     }
   
-    axios.post('http://localhost:3001/noticeUpdate', body).then((res) => {
+    axios.post('/api/noticeUpdate', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {
