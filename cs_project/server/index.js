@@ -93,11 +93,12 @@ app.get('/auth', auth, (req, res) => {
   // 클라이언트에게 유저 정보 전달
   res.status(200).json({
     _id: req.user._id,
+    isAdmin: req.user.admin === 0 ? false : true,
     isAuth: true,
     userId: req.user.userId,
     username: req.user.username,
     age: req.user.age,
-    gender: req.user.gender === 0 ? "남" : "여",
+    gender: req.user.gender
     email: req.user.email,
     phone: req.user.phone
   })
@@ -204,6 +205,7 @@ app.post('/notice', (req, res) => {
     return res.status(200).json({ success: true })
   })
 })
+
 
 // 공지 게시판 조회
 app.post('/getNoticeInfo', (req, res) => {
