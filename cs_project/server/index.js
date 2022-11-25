@@ -76,7 +76,7 @@ app.post('/api/login', (req, res) => {
         // x-auth-token : 엔드 포인트에서 인증 토큰 요청해서 
         // 성공시 서버에 인증 토큰을 반환해 줌
         // 그 토큰을 쿠키에 저장
-        console.log(user)
+
         res.cookie('x_auth', user.token)
           .status(200)
           .json({
@@ -110,6 +110,7 @@ app.get('/auth', auth, (req, res) => {
 app.post('/api/logout', (req, res) => {
   User.findOneAndUpdate({ userId: req.body.userId }, { token: "" }, (err, user) => {
     if (err) return res.json({ success: false, err });
+    res.clearCookie('x_auth');
     return res.status(200).send({
       success: true
     })

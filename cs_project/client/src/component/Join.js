@@ -16,9 +16,6 @@ function Join() {
             span: 12,
         },
         };
-    // const gradeData = ['직원', '점주', '점장'];
-    // const weekData = ['평일', '주말'];
-    // const timeData = ['오전', '점심', '저녁', '야간'];
 
     const validateMessages = {
         // 문법 경고 문구 무시 주석
@@ -247,31 +244,6 @@ function Join() {
                         >
                             <Input type="text" placeholder='- 를 제외한 숫자만 입력'/>
                         </Form.Item>
-                        {/* <Form.Item
-                            name={['user', 'grade']}
-                            label="파트"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
-                        >
-                            <Select
-                                allowClear
-                                options={gradeData.map((grade) => ({ label: grade, value: grade }))}
-                            >
-                            </Select>
-                            <Select
-                                allowClear
-                                options={weekData.map((week) => ({ label: week, value: week }))}
-                            >
-                            </Select>
-                            <Select
-                                allowClear
-                                options={timeData.map((time) => ({ label: time, value: time }))}
-                            >
-                            </Select>
-                        </Form.Item> */}
                         <Form.Item
                             name={['user', 'gender']}
                             label="성별"

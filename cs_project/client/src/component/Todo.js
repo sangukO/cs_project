@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import Nav from "./Nav";
-import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
+import { Breadcrumb, Button, Modal, Radio, Input, Form, Select,DatePicker } from 'antd';
 import 'antd/dist/antd.min.css';
 import {
     UndoOutlined,
@@ -23,7 +23,11 @@ function Todo() {
   const [editForm] = Form.useForm();
   const [todoData, setTodoData] = useState([]);
   const [_idOfTodo, set_idOfTodo] = useState("");
+
   let dataArry = [];
+
+  const weekData = ['평일', '주말'];
+  const timeData = ['오전', '점심', '저녁', '야간'];
 
   const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
   const [writeValue, setWriteValue] = useState("진행중");
@@ -36,6 +40,8 @@ function Todo() {
   const showWriteModal = () => {
     writeForm.setFieldsValue({
       tag: "진행중",
+      week: "",
+      time: "",
     });
     setisWriteModalOpen(true);
   };
@@ -49,11 +55,11 @@ function Todo() {
     let body = {
       name : writeForm.getFieldValue(('name')),
       date : writeForm.getFieldValue(('date')),
-      time : writeForm.getFieldValue(('time')),
+      time : writeForm.getFieldValue(('week'))+" "+writeForm.getFieldValue(('time')),
       todo : writeForm.getFieldValue(('todo')),
       tag : writeForm.getFieldValue(('tag'))
     }
-  
+
     axios.post('/api/board', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
@@ -116,6 +122,7 @@ function Todo() {
       _id : _idOfTodo,
       name : editForm.getFieldValue(('name')),
       date : editForm.getFieldValue(('date')),
+      week : editForm.getFieldValue(('week')),
       time : editForm.getFieldValue(('time')),
       todo : editForm.getFieldValue(('todo')),
       tag : editForm.getFieldValue(('tag'))
@@ -358,25 +365,24 @@ function Todo() {
                         <Form.Item
                             label="날짜"
                             name="date"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
                         >
-                            <Input />
+                            <DatePicker size='middle' style={{ width: '100%' }} format={'YYYY/MM/DD'} />
                         </Form.Item>
 
                         <Form.Item
                             label="시간"
-                            name="time"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
+                            name='week'
                         >
-                            <Input />
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
+                            <Select
+                                allowClear
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item
@@ -454,14 +460,20 @@ function Todo() {
 
                         <Form.Item
                             label="시간"
-                            name="time"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
+                            name='time'
                         >
-                            <Input readOnly={true} className='time'/>
+                            <Select
+                                allowClear
+                                name='time1'
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
+                            <Select
+                                allowClear
+                                name='time2'
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item

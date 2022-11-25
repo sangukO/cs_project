@@ -1,4 +1,3 @@
-import { useDispatch } from 'react-redux';
 import 'antd/dist/antd.min.css';
 import {  Breadcrumb, Button, Checkbox, Form, Input  } from 'antd';
 import  { Link, useNavigate } from 'react-router-dom'; 
@@ -7,7 +6,6 @@ import Nav from "./Nav";
 import axios from 'axios';
 
 function Login() {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const onFinish = (values) => {
@@ -18,7 +16,9 @@ function Login() {
         axios.post('/api/login', body)
         .then((res) => {
             if (res.data.loginSuccess) {
-                dispatch({type:'getId', userId: res.data.userId});
+                localStorage.clear();
+                localStorage.setItem("userId",res.data.userInfo.userId);
+                localStorage.setItem("token",res.data.userInfo.token);
                 navigate('/');
             }
             else {
