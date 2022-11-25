@@ -4,10 +4,11 @@ const saltRounds = 10;
 const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema( {    // 스키마 세팅
+  
   userId:  {
     type: String,  
     maxlength: 50,
-    unique: 1 
+    unique: 1
   },
   password: {
     type: String,
@@ -33,6 +34,10 @@ const userSchema = mongoose.Schema( {    // 스키마 세팅
   },
   tokenExp: {
     type: Number
+  },
+  admin: {
+    type: Number,
+    default: 0
   }
 
 })

@@ -46,7 +46,7 @@ function Notice() {
   ];
 
   const getNotice = () => {
-    axios.post('http://localhost:3001/getNoticeInfo').then((res) => {
+    axios.post('/api/getNoticeInfo').then((res) => {
       if(!res.status === 200) {
           /** res 보고 예외처리 꼼꼼하게 */
           if(res.data.err.message) {

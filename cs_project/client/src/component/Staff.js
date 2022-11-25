@@ -38,7 +38,7 @@ function Staff() {
   
   /** 사용자 정보를 가져온다 */
   const getUserInfo = () => {
-    axios.post('http://localhost:3001/getUserInfo').then((res) => {
+    axios.post('/api/getUserInfo').then((res) => {
       if(!res.status === 200) {
           if(res.data.err.message) {
               alert(res.data.err.message);
@@ -66,7 +66,7 @@ function Staff() {
 
       initDataError(staffName);
   
-      axios.post('http://localhost:3001/getTodo').then((res) => {
+      axios.post('/api/getTodo').then((res) => {
         if(!res.status === 200) {
             if(res.data.err.message) {
                 alert(res.data.err.message);

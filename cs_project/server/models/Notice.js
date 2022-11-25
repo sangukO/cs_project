@@ -23,7 +23,7 @@ const noticeSchema = mongoose.Schema( {    // 스키마 세팅
 
 //id값 자동 상승 게시물 구분
 noticeSchema.plugin(autoIncrement.plugin, {
-  model: 'notice',
+  model: 'Notice',
   field: '_id',
   startAt: 1, //시작
   increment: 1 // 증가
@@ -31,3 +31,4 @@ noticeSchema.plugin(autoIncrement.plugin, {
 
 const Notice = mongoose.model('Notice', noticeSchema)
 module.exports = { Notice }
+

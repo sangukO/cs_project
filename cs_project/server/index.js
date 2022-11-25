@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
-const cors = require('cors') //cors 오류 해결
-app.use(cors({ origin: 'http://localhost:3000', credentials: true })) //cors 오류 해결
+//const cors = require('cors') //cors 오류 해결
+//app.use(cors({ origin: 'http://localhost:3000', credentials: true })) //cors 오류 해결
 
 const port = 3001;
 
@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 })
 
 //회원가입
-app.post('/register', (req, res) => {
+app.post('/api/register', (req, res) => {
   //회원가입 할 때 필요한 정보들 client에서 가져오면 
   //해당 데이터를 데이터베이스에 넣어준다.
   console.log(req.body)
@@ -49,7 +49,7 @@ app.post('/register', (req, res) => {
 })
 
 // login
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   //params안의 userId 찾아서 비교
   User.findOne({ userId: req.body.userId }, (err, user) => {
     if (!user) {
@@ -81,30 +81,31 @@ app.post('/login', (req, res) => {
             _id: user._id,
             userId: user.userId
           });
-        // console.log(user.token)
+        //console.log(res.cookie.x_auth)
         // console.log(user._id)
       });
     });
   });
 })
 
-// 로그인 유저 정보 post로 바꿔보기
+// auth
 app.get('/auth', auth, (req, res) => {
   // 여기까지 미들웨어(auth.js)를 통과해 왔다는 얘기는 Authentication이 True라는 말
   // 클라이언트에게 유저 정보 전달
   res.status(200).json({
     _id: req.user._id,
+    isAdmin: req.user.admin === 0 ? false : true,
     isAuth: true,
     userId: req.user.userId,
     username: req.user.username,
     age: req.user.age,
-    gender: req.user.gender === 0 ? "남" : "여",
+    gender: req.user.gender,
     email: req.user.email,
     phone: req.user.phone
   })
 })
 
-app.post('/logout', (req, res) => {
+app.post('/api/logout', (req, res) => {
   User.findOneAndUpdate({ userId: req.body.userId }, { token: "" }, (err, user) => {
     if (err) return res.json({ success: false, err });
     return res.status(200).send({
@@ -114,7 +115,7 @@ app.post('/logout', (req, res) => {
 })
 
 // 게시판 작성
-app.post('/board', (req, res) => {
+app.post('/api/board', auth, (req, res) => {
   const board = new Board(req.body)
   board.save((err, boardInfo) => {
     if (err) return res.json({ success: false, err })
@@ -123,7 +124,7 @@ app.post('/board', (req, res) => {
 })
 
 // 게시판 조회
-app.post('/getTodo', (req, res) => {
+app.post('/api/getTodo', auth, (req, res) => {
 
   Board.find({}, (err, boardInfo) => {
     return res.json({
@@ -133,7 +134,7 @@ app.post('/getTodo', (req, res) => {
 })
 
 // 게시판 수정
-app.post('/update', async (req, res) => {
+app.post('/api/update', async (req, res) => {
 
   const { name, date, time, todo, tag, _id } = req.body
   await Board.updateOne({ _id }, { $set: { name, date, time, todo, tag } });
@@ -144,7 +145,7 @@ app.post('/update', async (req, res) => {
 })
 
 // 게시판 삭제
-app.post("/delete", async (req, res) => {
+app.post("/api/delete", async (req, res) => {
 
   const { _id } = req.body
   await Board.deleteOne({ _id: _id })
@@ -153,7 +154,7 @@ app.post("/delete", async (req, res) => {
   return res.status(200).json({ success: true })
 });
 
-app.post("/getWriterName", (req, res) => {
+app.post("/api/getWriterName", (req, res) => {
   User.findOne({ userId: req.body.userId }, (err, user) => {
     if (user) {
       return res.status(200).json({
@@ -164,7 +165,7 @@ app.post("/getWriterName", (req, res) => {
 })
 
 // 메모 기능
-app.post('/memo', async (req, res) => {
+app.post('/api/memo', async (req, res) => {
 
   const { _id, memo } = req.body
   await Board.updateOne({ _id }, { $set: { memo } })
@@ -174,7 +175,7 @@ app.post('/memo', async (req, res) => {
 })
 
 // 메모 값 가져오기
-app.post('/getMemo', (req, res) => {
+app.post('/api/getMemo', (req, res) => {
 
   Board.findOne({ _id: req.body._id }, (err, board) => {
     if (board) {
@@ -186,7 +187,7 @@ app.post('/getMemo', (req, res) => {
 })
 
 // 직원 조회
-app.post('/getUserInfo', (req, res) => {
+app.post('/api/getUserInfo', (req, res) => {
 
   User.find({}, (err, userInfo) => {
     return res.json({
@@ -196,7 +197,7 @@ app.post('/getUserInfo', (req, res) => {
 })
 
 // 공지 게시판 작성
-app.post('/notice', (req, res) => {
+app.post('/api/notice', (req, res) => {
   const notice = new Notice(req.body)
   console.log(req.body)
   console.log(notice)
@@ -206,8 +207,9 @@ app.post('/notice', (req, res) => {
   })
 })
 
+
 // 공지 게시판 조회
-app.post('/getNoticeInfo', (req, res) => {
+app.post('/api/getNoticeInfo', (req, res) => {
 
   Notice.find({}, (err, noticeInfo) => {
     return res.json({
@@ -217,7 +219,7 @@ app.post('/getNoticeInfo', (req, res) => {
 })
 
 // 공지 상세 조회
-app.post('/getNoticeDetail', (req, res) => {
+app.post('/api/getNoticeDetail', (req, res) => {
 
   Notice.findOne({ _id: req.body._id }, (err, noticeDetail) => {
     return res.json({
@@ -227,7 +229,7 @@ app.post('/getNoticeDetail', (req, res) => {
 })
 
 // 공지 게시판 수정
-app.post('/noticeUpdate', async (req, res) => {
+app.post('/api/noticeUpdate', async (req, res) => {
 
   const { writer, date, title, content, _id } = req.body
   await Notice.updateOne({ _id }, { $set: { writer, date, title, content } });
@@ -238,7 +240,7 @@ app.post('/noticeUpdate', async (req, res) => {
 })
 
 // 공지 게시판 삭제
-app.post("/noticeDelete", async (req, res) => {
+app.post("/api/noticeDelete", async (req, res) => {
 
   const { _id } = req.body
   await Notice.deleteOne({ _id: _id })
