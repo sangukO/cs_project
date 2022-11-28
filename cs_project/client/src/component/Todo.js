@@ -24,6 +24,7 @@ function Todo() {
   const [editForm] = Form.useForm();
   const [todoData, setTodoData] = useState([]);
   const [_idOfTodo, set_idOfTodo] = useState("");
+  const [writerName, setWriterName] = useState("");
 
   let dataArry = [];
 
@@ -38,8 +39,30 @@ function Todo() {
 
   const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
 
+  const [userId, setUserId] = useState("");
+
+  const loginCheck = () => { // 페이지에 들어올때 사용자 체크
+
+	};
+
+  const setName = () => {
+
+    if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
+      setUserId(localStorage.getItem('userId'));
+    }
+
+    let body = {
+      userId : localStorage.getItem('userId'),
+    }
+
+    axios.post('/api/getWriterName', body).then((res) => {
+      setWriterName(res.data.writerName)
+    })
+  }
+
   const showWriteModal = () => {
     writeForm.setFieldsValue({
+      name : writerName,
       tag: "진행중",
       week: "",
       time: "",
@@ -303,6 +326,8 @@ function Todo() {
   ];
 
   useEffect(() => {
+    loginCheck()
+    setName()
     getTodo()
   }, []);
 
@@ -360,7 +385,7 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input />
+                            <Input readOnly={true} />
                         </Form.Item>
 
                         <Form.Item

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
 import Header from "./Header";
 import Nav from "./Nav";
 import { Breadcrumb, Button, Input, Form } from 'antd';
@@ -22,7 +21,13 @@ function WriteNotice() {
   const [writeForm] = Form.useForm();
   const navigate = useNavigate();
   const [writerName, setWriterName] = useState("");
-  const userId = useSelector( (state) => state );
+  const [userId, setUserId] = useState("");
+
+  const loginCheck = () => { // 페이지에 들어올때 사용자 체크
+		if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
+      setUserId(localStorage.getItem('userId'));
+    }
+	};
 
   /** 작성 중인 id의 작성자 이름 가져오기 */
   const getWriterNameData = () => {
@@ -64,6 +69,7 @@ function WriteNotice() {
   }
 
   useEffect(() => {
+    loginCheck()
     // 글 제목 input에 autofocus
     document.getElementById("focus").focus()
     getWriterNameData()
