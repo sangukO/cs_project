@@ -11,6 +11,9 @@ const boardSchema = mongoose.Schema( {    // 스키마 세팅
     type: String,
 
   },
+  // week:{
+  //   type: String
+  // },
   time: {
     type: String,
 
