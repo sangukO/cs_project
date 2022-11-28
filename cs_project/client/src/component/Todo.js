@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
 import axios from 'axios';
+import moment from 'moment';
 
 function Todo() {
 
@@ -54,12 +55,11 @@ function Todo() {
 
     let body = {
       name : writeForm.getFieldValue(('name')),
-      date : writeForm.getFieldValue(('date')),
+      date : writeForm.getFieldValue(('date')).format('YYYY/MM/DD'),
       time : writeForm.getFieldValue(('week'))+" "+writeForm.getFieldValue(('time')),
       todo : writeForm.getFieldValue(('todo')),
       tag : writeForm.getFieldValue(('tag'))
     }
-
     axios.post('/api/board', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
@@ -84,8 +84,9 @@ function Todo() {
     if(record.tag[0]==="success") {
       editForm.setFieldsValue({
         name : record.name,
-        date : record.date,
-        time : record.time,
+        date : moment(record.date, 'YYYYMMDDHHmmss'),
+        week : record.time.split(" ")[0],
+        time : record.time.split(" ")[1],
         todo : record.todo,
         tag : "완료",
       })
@@ -93,8 +94,9 @@ function Todo() {
     if(record.tag[0]==="warning") {
       editForm.setFieldsValue({
         name : record.name,
-        date : record.date,
-        time : record.time,
+        date : moment(record.date, 'YYYYMMDDHHmmss'),
+        week : record.time.split(" ")[0],
+        time : record.time.split(" ")[1],
         todo : record.todo,
         tag : "진행중",
       })
@@ -102,8 +104,9 @@ function Todo() {
     if(record.tag[0]==="error") {
       editForm.setFieldsValue({
         name : record.name,
-        date : record.date,
-        time : record.time,
+        date : moment(record.date, 'YYYYMMDDHHmmss'),
+        week : record.time.split(" ")[0],
+        time : record.time.split(" ")[1],
         todo : record.todo,
         tag : "미완료",
       })
@@ -117,13 +120,11 @@ function Todo() {
   };
 
   const onEditOk = () => {
-
     let body = {
       _id : _idOfTodo,
       name : editForm.getFieldValue(('name')),
-      date : editForm.getFieldValue(('date')),
-      week : editForm.getFieldValue(('week')),
-      time : editForm.getFieldValue(('time')),
+      date : editForm.getFieldValue(('date')).format('YYYY/MM/DD'),
+      time : editForm.getFieldValue(('week'))+" "+editForm.getFieldValue(('time')),
       todo : editForm.getFieldValue(('todo')),
       tag : editForm.getFieldValue(('tag'))
     }
@@ -370,7 +371,7 @@ function Todo() {
                         </Form.Item>
 
                         <Form.Item
-                            label="시간"
+                            label="요일"
                             name='week'
                         >
                             <Select
@@ -378,6 +379,12 @@ function Todo() {
                                 options={weekData.map((week) => ({ label: week, value: week }))}
                             >
                             </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="시간"
+                            name='time'
+                        >
                             <Select
                                 allowClear
                                 options={timeData.map((time) => ({ label: time, value: time }))}
@@ -449,13 +456,19 @@ function Todo() {
                         <Form.Item
                             label="날짜"
                             name="date"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
                         >
-                            <Input />
+                            <DatePicker size='middle' style={{ width: '100%' }} format={'YYYY/MM/DD'} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="요일"
+                            name='week'
+                        >
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item
@@ -464,13 +477,6 @@ function Todo() {
                         >
                             <Select
                                 allowClear
-                                name='time1'
-                                options={weekData.map((week) => ({ label: week, value: week }))}
-                            >
-                            </Select>
-                            <Select
-                                allowClear
-                                name='time2'
                                 options={timeData.map((time) => ({ label: time, value: time }))}
                             >
                             </Select>

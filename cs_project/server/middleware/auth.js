@@ -11,6 +11,7 @@ let auth = (req, res, next) => {
 
     req.token = token;
     req.user = user;
+
     next();
   });
   //3. 2조건 만족시 Okay

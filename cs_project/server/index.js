@@ -14,6 +14,7 @@ const { User } = require("./models/User")
 const { auth } = require("./middleware/auth")
 const { Board } = require("./models/Board")
 const { Notice } = require("./models/Notice")
+const { role } = require("./middleware/role")
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
@@ -190,7 +191,7 @@ app.post('/api/getMemo', (req, res) => {
 })
 
 // 직원 조회
-app.post('/api/getUserInfo', (req, res) => {
+app.post('/api/getUserInfo', auth, role, (req, res) => {
 
   User.find({}, (err, userInfo) => {
     return res.json({
