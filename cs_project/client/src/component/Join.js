@@ -1,6 +1,7 @@
 import 'antd/dist/antd.min.css';
 import {  Breadcrumb, Button, Form, Input, InputNumber, Select } from 'antd';
 import  { Link, useNavigate } from 'react-router-dom'; 
+import { useState } from "react";
 import Header from "./Header";
 import Nav from "./Nav";
 import axios from 'axios';
@@ -16,6 +17,9 @@ function Join() {
             span: 12,
         },
         };
+    const gradeData = ['직원', '점주', '점장'];
+    const weekData = ['평일', '주말'];
+    const timeData = ['오전', '점심', '저녁', '야간'];
 
     const validateMessages = {
         // 문법 경고 문구 무시 주석
@@ -91,7 +95,6 @@ function Join() {
                             () => ({
                                 // 유효성 검사 - 숫자, 알파벳만 가능
                                 validator(_, value) {
-                                    console.log(value)
                                   var pattern_num = /[0-9]/;  // 숫자 
 
                                   var pattern_eng = /[a-zA-Z]/;  // 알파벳
@@ -101,16 +104,6 @@ function Join() {
                                   var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;  // 한글 체크
                                   if ( (pattern_num.test(value)) || (pattern_eng.test(value)) ) {
                                     if(!(pattern_spc.test(value)) && !(pattern_kor.test(value)) ) {
-                                        let body = {
-                                            userId : value,
-                                        }
-                                        axios.post('/api/idCheck', body).then((res) => {
-                                            if(!res.data.sucess) {
-                                                return Promise.reject(new Error('중복된 아이디입니다!'));
-                                            } else {
-                                                return Promise.resolve(new Error('사용 가능한 아이디입니다!'));
-                                            }
-                                        })
                                       return Promise.resolve();
                                     } else{
                                       return Promise.reject(new Error('아이디 형식을 확인해주세요!'));
@@ -243,6 +236,31 @@ function Join() {
                             ]}
                         >
                             <Input type="text" placeholder='- 를 제외한 숫자만 입력'/>
+                        </Form.Item>
+                        <Form.Item
+                            name={['user', 'grade']}
+                            label="파트"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Select
+                                allowClear
+                                options={gradeData.map((grade) => ({ label: grade, value: grade }))}
+                            >
+                            </Select>
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
+                            <Select
+                                allowClear
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
                         <Form.Item
                             name={['user', 'gender']}
