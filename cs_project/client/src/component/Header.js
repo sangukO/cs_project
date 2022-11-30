@@ -11,7 +11,7 @@ function Nav() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState("");
 
-  const loginCheck = () => { // 페이지에 들어올때 사용자 체크
+  const loginCheck = () => { // 페이지에 들어올때 사용자 체크 
 		if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
       setUserId(localStorage.getItem('userId'));
     }
