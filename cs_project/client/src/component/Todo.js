@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import Nav from "./Nav";
-import { Breadcrumb, Button, Modal, Radio, Input, Form } from 'antd';
+import { Breadcrumb, Button, Modal, Radio, Input, Form, Select,DatePicker } from 'antd';
 import 'antd/dist/antd.min.css';
 import {
     UndoOutlined,
@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import { Table, Tag } from 'antd';
 import axios from 'axios';
+import moment from 'moment';
 
 function Todo() {
 
@@ -23,7 +24,12 @@ function Todo() {
   const [editForm] = Form.useForm();
   const [todoData, setTodoData] = useState([]);
   const [_idOfTodo, set_idOfTodo] = useState("");
+  const [writerName, setWriterName] = useState("");
+
   let dataArry = [];
+
+  const weekData = ['평일', '주말'];
+  const timeData = ['오전', '점심', '저녁', '야간'];
 
   const [isWriteModalOpen, setisWriteModalOpen] = useState(false);
   const [writeValue, setWriteValue] = useState("진행중");
@@ -33,9 +39,33 @@ function Todo() {
 
   const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
 
+  const [userId, setUserId] = useState("");
+
+  const loginCheck = () => { // 페이지에 들어올때 사용자 체크
+
+	};
+
+  const setName = () => {
+
+    if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
+      setUserId(localStorage.getItem('userId'));
+    }
+
+    let body = {
+      userId : localStorage.getItem('userId'),
+    }
+
+    axios.post('/api/getWriterName', body).then((res) => {
+      setWriterName(res.data.writerName)
+    })
+  }
+
   const showWriteModal = () => {
     writeForm.setFieldsValue({
+      name : writerName,
       tag: "진행중",
+      week: "",
+      time: "",
     });
     setisWriteModalOpen(true);
   };
@@ -48,12 +78,11 @@ function Todo() {
 
     let body = {
       name : writeForm.getFieldValue(('name')),
-      date : writeForm.getFieldValue(('date')),
-      time : writeForm.getFieldValue(('time')),
+      date : writeForm.getFieldValue(('date')).format('YYYY/MM/DD'),
+      time : writeForm.getFieldValue(('week'))+" "+writeForm.getFieldValue(('time')),
       todo : writeForm.getFieldValue(('todo')),
       tag : writeForm.getFieldValue(('tag'))
     }
-  
     axios.post('/api/board', body).then((res) => {
       if(!res.data.success) {
           /** res 보고 예외처리 꼼꼼하게 */
@@ -78,8 +107,9 @@ function Todo() {
     if(record.tag[0]==="success") {
       editForm.setFieldsValue({
         name : record.name,
-        date : record.date,
-        time : record.time,
+        date : moment(record.date, 'YYYYMMDDHHmmss'),
+        week : record.time.split(" ")[0],
+        time : record.time.split(" ")[1],
         todo : record.todo,
         tag : "완료",
       })
@@ -87,8 +117,9 @@ function Todo() {
     if(record.tag[0]==="warning") {
       editForm.setFieldsValue({
         name : record.name,
-        date : record.date,
-        time : record.time,
+        date : moment(record.date, 'YYYYMMDDHHmmss'),
+        week : record.time.split(" ")[0],
+        time : record.time.split(" ")[1],
         todo : record.todo,
         tag : "진행중",
       })
@@ -96,8 +127,9 @@ function Todo() {
     if(record.tag[0]==="error") {
       editForm.setFieldsValue({
         name : record.name,
-        date : record.date,
-        time : record.time,
+        date : moment(record.date, 'YYYYMMDDHHmmss'),
+        week : record.time.split(" ")[0],
+        time : record.time.split(" ")[1],
         todo : record.todo,
         tag : "미완료",
       })
@@ -111,12 +143,11 @@ function Todo() {
   };
 
   const onEditOk = () => {
-
     let body = {
       _id : _idOfTodo,
       name : editForm.getFieldValue(('name')),
-      date : editForm.getFieldValue(('date')),
-      time : editForm.getFieldValue(('time')),
+      date : editForm.getFieldValue(('date')).format('YYYY/MM/DD'),
+      time : editForm.getFieldValue(('week'))+" "+editForm.getFieldValue(('time')),
       todo : editForm.getFieldValue(('todo')),
       tag : editForm.getFieldValue(('tag'))
     }
@@ -295,6 +326,8 @@ function Todo() {
   ];
 
   useEffect(() => {
+    loginCheck()
+    setName()
     getTodo()
   }, []);
 
@@ -352,31 +385,36 @@ function Todo() {
                             },
                             ]}
                         >
-                            <Input />
+                            <Input readOnly={true} />
                         </Form.Item>
 
                         <Form.Item
                             label="날짜"
                             name="date"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
                         >
-                            <Input />
+                            <DatePicker size='middle' style={{ width: '100%' }} format={'YYYY/MM/DD'} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="요일"
+                            name='week'
+                        >
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item
                             label="시간"
-                            name="time"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
+                            name='time'
                         >
-                            <Input />
+                            <Select
+                                allowClear
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item
@@ -443,25 +481,30 @@ function Todo() {
                         <Form.Item
                             label="날짜"
                             name="date"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
                         >
-                            <Input />
+                            <DatePicker size='middle' style={{ width: '100%' }} format={'YYYY/MM/DD'} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="요일"
+                            name='week'
+                        >
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item
                             label="시간"
-                            name="time"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
+                            name='time'
                         >
-                            <Input readOnly={true} className='time'/>
+                            <Select
+                                allowClear
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item
