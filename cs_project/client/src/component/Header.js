@@ -11,12 +11,20 @@ function Nav() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState("");
 
-  const loginCheck = () => { // 페이지에 들어올때 사용자 체크 
-		if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
-      setUserId(localStorage.getItem('userId'));
-    }
+  const loginCheck = () => { // 페이지에 들어올때 사용자 체크
+    axios.get('/api/auth').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        setUserId(res.data.userId);
+      }
+    })
 	};
-
 
   const logout = () => {
 
@@ -25,7 +33,6 @@ function Nav() {
     }
 
     axios.post('/api/logout', body).then((req) => {
-      localStorage.clear();
       alert('로그아웃되었습니다.');
       navigate('/');
     })

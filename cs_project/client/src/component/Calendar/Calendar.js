@@ -1,5 +1,5 @@
 import Header from "../Header";
-import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button } from 'antd';
+import { Badge, Breadcrumb, Calendar as Calendar2, Modal, Form, Input, Radio, Button, Select, DatePicker } from 'antd';
 import 'antd/dist/antd.min.css';
 import Nav from "../Nav";
 import  { Link } from 'react-router-dom'; 
@@ -8,7 +8,6 @@ import locale from "antd/es/calendar/locale/ko_KR";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import {
-    CloseOutlined,
     CheckOutlined,
     UndoOutlined
   } from '@ant-design/icons';
@@ -32,6 +31,26 @@ function Calendar() {
 
     let dataArray = [];
     let Arr = [];
+
+    const weekData = ['평일', '주말'];
+    const timeData = ['오전', '점심', '저녁', '야간'];
+
+    const [userName, setUserName] = useState("");
+
+    const loginCheck = () => { // 페이지에 들어올때 사용자 체크
+      axios.get('/api/auth').then((res) => {
+        if(!res.status === 200) {
+            /** res 보고 예외처리 꼼꼼하게 */
+            if(res.data.err.message) {
+                alert(res.data.err.message);
+            } else {
+                alert("예외처리");
+            }
+        } else {
+          setUserName(res.data.username);
+        }
+      })
+      };
 
     const getTodo = () => {
         axios.post('/api/getTodo').then((res) => {
@@ -63,6 +82,7 @@ function Calendar() {
                     "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
+                    "week": dataArray.boardInfo[i].week,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
                     "memo":dataArray.boardInfo[i].memo,
@@ -76,6 +96,7 @@ function Calendar() {
                     "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
+                    "week": dataArray.boardInfo[i].week,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
                     "memo":dataArray.boardInfo[i].memo,
@@ -89,6 +110,7 @@ function Calendar() {
                     "_id":dataArray.boardInfo[i]._id,
                     "name":dataArray.boardInfo[i].name,
                     "date":dataArray.boardInfo[i].date,
+                    "week": dataArray.boardInfo[i].week,
                     "time": dataArray.boardInfo[i].time,
                     "todo":dataArray.boardInfo[i].todo,
                     "memo":dataArray.boardInfo[i].memo,
@@ -145,7 +167,7 @@ function Calendar() {
         let body = {
           name : writeForm.getFieldValue(('name')),
           date : writeForm.getFieldValue(('date')),
-          time : writeForm.getFieldValue(('time')),
+          time : writeForm.getFieldValue(('week'))+" "+writeForm.getFieldValue(('time')),
           todo : writeForm.getFieldValue(('todo')),
           tag : writeForm.getFieldValue(('tag'))
       }
@@ -219,12 +241,13 @@ function Calendar() {
     }
 
     useEffect(() => {
+        loginCheck()
         getTodo()
     },[]);
 
     useEffect(() => {
         writeForm.setFieldsValue({
-            name: "",
+            name: userName,
             date: selectedValue,
             time: "",
             todo: "",
@@ -332,7 +355,7 @@ function Calendar() {
                             },
                             ]}
                         >
-                            <Input />
+                            <Input readOnly={true} />
                         </Form.Item>
 
                         <Form.Item
@@ -348,15 +371,25 @@ function Calendar() {
                         </Form.Item>
 
                         <Form.Item
-                            label="시간"
-                            name="time"
-                            rules={[
-                            {
-                                message: 'Please input your password!',
-                            },
-                            ]}
+                            label="요일"
+                            name='week'
                         >
-                            <Input />
+                            <Select
+                                allowClear
+                                options={weekData.map((week) => ({ label: week, value: week }))}
+                            >
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="시간"
+                            name='time'
+                        >
+                            <Select
+                                allowClear
+                                options={timeData.map((time) => ({ label: time, value: time }))}
+                            >
+                            </Select>
                         </Form.Item>
 
                         <Form.Item

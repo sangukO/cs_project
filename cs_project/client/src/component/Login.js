@@ -16,9 +16,7 @@ function Login() {
         axios.post('/api/login', body)
         .then((res) => {
             if (res.data.loginSuccess) {
-                localStorage.clear();
-                localStorage.setItem("userId",res.data.userInfo.userId);
-                localStorage.setItem("token",res.data.userInfo.token);
+                alert(res.data.userInfo.userId+"님 환영합니다.");
                 navigate('/');
             }
             else {

@@ -84,15 +84,13 @@ app.post('/api/login', (req, res) => {
             loginSuccess: true,
             userInfo: user
           });
-        //console.log(res.cookie.x_auth)
-        // console.log(user._id)
       });
     });
   });
 })
 
 // auth
-app.get('/auth', auth, (req, res) => {
+app.get('/api/auth', auth, (req, res) => {
   // 여기까지 미들웨어(auth.js)를 통과해 왔다는 얘기는 Authentication이 True라는 말
   // 클라이언트에게 유저 정보 전달
   res.status(200).json({
@@ -201,7 +199,7 @@ app.post('/api/getUserInfo', auth, role, (req, res) => {
 })
 
 // 공지 게시판 작성
-app.post('/api/notice', (req, res) => {
+app.post('/api/notice', auth, (req, res) => {
   const notice = new Notice(req.body)
   console.log(req.body)
   console.log(notice)

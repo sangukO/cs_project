@@ -14,6 +14,7 @@ function Notice() {
 
   let noticedataArry = [];
   const [noticeTableData, setNoticeTableData] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const columns = [
     {
@@ -45,7 +46,23 @@ function Notice() {
     },
   ];
 
+  const getAdminData = () => {
+    axios.get('/api/auth').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        setIsAdmin(res.data.isAdmin);
+      }
+    })
+  }
+
   const getNotice = () => {
+    
     axios.post('/api/getNoticeInfo').then((res) => {
       if(!res.status === 200) {
           /** res 보고 예외처리 꼼꼼하게 */
@@ -76,6 +93,7 @@ function Notice() {
 
 
   useEffect(() => {
+    getAdminData()
     getNotice()
   }, []);
 
@@ -96,7 +114,13 @@ function Notice() {
               </div>
               <div className="Margin" style={{height:"50px"}}></div>
               <div className="Title" style={{textAlign:'center'}}><h1>공지 목록</h1></div>
-              <div style={{float:"right", margin:'0 5px 20px 0'}}><Link to={"/WriteNotice"}><Button type="primary"><FormOutlined />작성</Button></Link></div>
+              <div style={{float:"right", margin:'0 5px 20px 0'}}>
+              {
+              isAdmin ? 
+              <Link to={"/WriteNotice"}><Button type="primary"><FormOutlined />작성</Button></Link>
+              : <div style={{float:"right", width:'50px', height:'32px'}}></div>
+              }
+              </div>
               <Table style={{width:'100%', margin:'auto'}} columns={columns} dataSource={noticeTableData}/>
             </div>
         </div>

@@ -17,8 +17,7 @@ const items = [
   getItem(<Link to={"/Notice"}>공지 목록</Link>, '/Notice', <NotificationOutlined />),
   getItem(<Link to={"/Todo"}>업무 관리</Link>, '/Todo', <LaptopOutlined />),
   getItem(<Link to={"/Calendar"}>일정 관리</Link>, '/Calendar', <CalendarOutlined />),
-  getItem(<Link to={"/Staff"}>직원 목록</Link>, '/Staff', <UserOutlined />),
-  getItem('통합 관리', '5', <DesktopOutlined />),
+  getItem(<Link to={"/Staff"}>직원 목록</Link>, '/Staff', <UserOutlined />)
 ];
 
 function Nav() {

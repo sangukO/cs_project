@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import Header from "./Header";
 import Nav from "./Nav";
-import { Breadcrumb, Button, Modal, Radio, Input, Form, Select,DatePicker } from 'antd';
+import { Breadcrumb, Button, Modal, Radio, Input, Form, Select, DatePicker } from 'antd';
 import 'antd/dist/antd.min.css';
 import {
     UndoOutlined,
@@ -24,7 +24,6 @@ function Todo() {
   const [editForm] = Form.useForm();
   const [todoData, setTodoData] = useState([]);
   const [_idOfTodo, set_idOfTodo] = useState("");
-  const [writerName, setWriterName] = useState("");
 
   let dataArry = [];
 
@@ -39,30 +38,26 @@ function Todo() {
 
   const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
 
-  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
 
   const loginCheck = () => { // 페이지에 들어올때 사용자 체크
-
-	};
-
-  const setName = () => {
-
-    if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
-      setUserId(localStorage.getItem('userId'));
-    }
-
-    let body = {
-      userId : localStorage.getItem('userId'),
-    }
-
-    axios.post('/api/getWriterName', body).then((res) => {
-      setWriterName(res.data.writerName)
+    axios.get('/api/auth').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        setUserName(res.data.username);
+      }
     })
-  }
+	};
 
   const showWriteModal = () => {
     writeForm.setFieldsValue({
-      name : writerName,
+      name : userName,
       tag: "진행중",
       week: "",
       time: "",
@@ -327,7 +322,6 @@ function Todo() {
 
   useEffect(() => {
     loginCheck()
-    setName()
     getTodo()
   }, []);
 

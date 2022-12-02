@@ -21,24 +21,21 @@ function WriteNotice() {
   const [writeForm] = Form.useForm();
   const navigate = useNavigate();
   const [writerName, setWriterName] = useState("");
-  const [userId, setUserId] = useState("");
 
   const loginCheck = () => { // 페이지에 들어올때 사용자 체크
-		if (localStorage.getItem('userId') !== null && localStorage.getItem('token') !== null) {
-      setUserId(localStorage.getItem('userId'));
-    }
-	};
-
-  /** 작성 중인 id의 작성자 이름 가져오기 */
-  const getWriterNameData = () => {
-    let body = {
-      userId : userId,
-    }
-
-    axios.post('/api/getWriterName', body).then((res) => {
-      setWriterName(res.data.writerName)
+    axios.get('/api/auth').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        setWriterName(res.data.username);
+      }
     })
-  }
+  };
 
   /** 글 작성 버튼 클릭 */
   const onClickSubmit = () => {
@@ -50,21 +47,18 @@ function WriteNotice() {
       content : editorRef.current?.getInstance().getHTML()
     }
 
-    console.log(body);
-
     axios.post('/api/notice', body).then((res) => {
-      console.log(res);
-      // if(!res.data.success) {
-      //     /** res 보고 예외처리 꼼꼼하게 */
-      //     if(res.data.err.message) {
-      //         alert(res.data.err.message);
-      //     } else {
-      //         alert("예외처리");
-      //     }
-      // } else {
-      //     alert("작성이 완료되었습니다.");
-      //     navigate(`/Notice`);
-      // }
+      if(!res.data.success) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+          alert("작성이 완료되었습니다.");
+          navigate(`/Notice`);
+      }
     })
   }
 
@@ -72,7 +66,6 @@ function WriteNotice() {
     loginCheck()
     // 글 제목 input에 autofocus
     document.getElementById("focus").focus()
-    getWriterNameData()
   }, []);
 
   return (

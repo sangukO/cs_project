@@ -157,7 +157,7 @@ function Join() {
                             {
                                 type: 'password',
                                 required: true,
-                                message: 'Please confirm your password!',
+                                message: '비밀번호를 확인해주세요!',
                             },
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
