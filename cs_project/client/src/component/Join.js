@@ -91,7 +91,6 @@ function Join() {
                             () => ({
                                 // 유효성 검사 - 숫자, 알파벳만 가능
                                 validator(_, value) {
-                                    console.log(value)
                                   var pattern_num = /[0-9]/;  // 숫자 
 
                                   var pattern_eng = /[a-zA-Z]/;  // 알파벳

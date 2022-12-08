@@ -22,10 +22,26 @@ function Detail() {
 
   const params = useParams();
   const [noticeDetail, setNoticeDetail] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   let noticeDetailArry = [];
   const [loading, setLoading] = useState(true);
   const [isDeleteModalOpen, setisDeleteModalOpen] = useState(false);
+
+  const getAdminData = () => {
+    axios.get('/api/auth').then((res) => {
+      if(!res.status === 200) {
+          /** res 보고 예외처리 꼼꼼하게 */
+          if(res.data.err.message) {
+              alert(res.data.err.message);
+          } else {
+              alert("예외처리");
+          }
+      } else {
+        setIsAdmin(res.data.isAdmin);
+      }
+    })
+  }
 
   /** 공지 상세 데이터 불러오기 */
   const getNoticeDetail = () => {
@@ -88,6 +104,7 @@ function Detail() {
   }
   
   useEffect(() => {
+    getAdminData()
     // 공지 상세 데이터 불러오기
     getNoticeDetail()
   }, []);
@@ -126,11 +143,17 @@ function Detail() {
                 <div className='NoticeContent' style={{marginLeft:'5%', marginTop:'30px'}}><Viewer initialValue={noticeDetail.content}/></div>
               </div>
               <div style={{float:"right"}}>
+              {
+                isAdmin ? 
+                <div>
                 <div style={{float:"left"}}><Button type="primary" ghost onClick={() => navigate(`/Notice`)}><OrderedListOutlined />목록</Button></div>
                 <div style={{float:"left", width:"20px", height:"5px"}}></div>
                 <div style={{float:"left"}}><Link to={`/EditNotice/${noticeDetail._id}`}><Button type="primary"><EditOutlined />수정</Button></Link></div>
                 <div style={{float:"left", width:"20px", height:"5px"}}></div>
                 <div style={{float:"left"}}><Button type="ghost" danger onClick={() => showDeleteModal(noticeDetail._id)}><DeleteOutlined />삭제</Button></div>
+                </div>
+                : <div style={{float:"left"}}><Button type="primary" ghost onClick={() => navigate(`/Notice`)}><OrderedListOutlined />목록</Button></div>
+                }
               </div>
             </div>
           </div>
